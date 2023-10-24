@@ -13,10 +13,10 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
   lambda.3.1<-
     
 #3--->8, surfaces to student hands
-  lambda.3.8<-A.surface*0.5*S.H*TE.HS*timestep
+  lambda.3.8<-A.surface*0.5*S.H*TE.SH*timestep
   
 #3--->9, surfaces to teacher hands
-  lambda.3.9<-A.surface*0.5*S.H*TE.HS*timestep
+  lambda.3.9<-A.surface*0.5*S.H*TE.SH*timestep
   
 #1---->4, room air to student respiratory tract
   if(student.mask==TRUE){
@@ -58,3 +58,6 @@ lambda.1.10<-inactiv.air*timestep
 #8,9-->10, hands to inactivation
 lambda.8.10<-inactiv.hands*timestep
 lambda.9.10<-inactiv.hands*timestep
+
+#3--->10, surfaces to inactivation
+lambda.3.10<-inactiv.surf*timestep
