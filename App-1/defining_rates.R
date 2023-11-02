@@ -1,30 +1,34 @@
 #states
 
-states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher respiratory tracts","student mucosal membrane",
+states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher respiratory tract","student mucosal membranes",
           "teacher mucosal membrane","student hands","teacher hands","inactivation")
 
-#1---->2, room air to exhaust
-  lambda.1.2<-AER*timestep
+#1---->2, room air to exhaust, first convert to minutes then adjust for timestep (fraction of a minute)
+  lambda.1.2<-AER*(1/60)*timestep
 
 #1---->3, room air to surfaces
   lambda.1.3<-settle*timestep
   
 #3---->1, surfaces to room air (resuspension)
-  lambda.3.1<-
+  lambda.3.1<-0 #assume no resuspension for now... 
     
 #3--->8, surfaces to student hands
-  lambda.3.8<-A.surface*0.5*S.H*TE.SH*timestep
+  lambda.3.8<-A.surface*num.student*S.H.student*H.student*TE.SH*timestep
+
+#8--->3, student hands to surfaces
+ lambda.8.3<- S.H.student*TE.HS*H.student*num.student
   
 #3--->9, surfaces to teacher hands
-  lambda.3.9<-A.surface*0.5*S.H*TE.SH*timestep
+  lambda.3.9<-A.surface*S.H.teacher*TE.SH*timestep
   
+#9--->8, teacher hands to surfaces
+  lambda.9.3<-S.H.teacher*TE.HS*H.teacher*timestep
+    
 #1---->4, room air to student respiratory tract
   if(student.mask==TRUE){
-    lambda.1.4<-(1/volume)*inhalation.student*(1-mask.student)*num.student*timestep
-  
+    lambda.1.4<-(1/volume)*((inhalation.student.male*num.student.male)+(inhalation.student.female*num.student.female))*(1-mask.student)*num.student*timestep
   }else{
-    lambda.1.4<-(1/volume)*inhalation.student*num.student*timestep
-  
+    lambda.1.4<-(1/volume)*((inhalation.student.male*num.student.male)+(inhalation.student.female*num.student.female))*num.student*timestep
   }
 
 #1---->5, room air to teacher respiratory tract
@@ -34,18 +38,18 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
     lambda.1.5<-(1/volume)*inhalation.teacher*timestep
   }
 
-#1---->6, room air to student mucosal membrane
+#8---->6, hands to student mucosal membrane
   if(student.mask==TRUE){
-    lambda.1.6<-0.5*S.F*TE.HF*H.mask.student*timestep
+    lambda.8.6<-S.F.student*TE.HF*num.student*H.mask.student*timestep
   }else{
-    lambda.1.6<-0.5*S.F*TE.HF*H.student*timestep
+    lambda.8.6<-S.F.student*TE.HF*num.student*H.student*timestep
   }
 
-#1---->7, room air to teacher mucosal membrane
+#9---->7, hands to teacher mucosal membrane
   if(teacher.mask==TRUE){
-    lambda.1.7<-0.5*S.F*TE.HF*H.mask.teacher*timestep
+    lambda.9.7<-S.F.teacher*TE.HF*H.mask.teacher*timestep
   }else{
-    lambda.1.7<-0.5*S.F*TE.HF*H.teacher*timestep
+    lambda.9.7<-S.F.teacher*TE.HF*H.teacher*timestep
   }
 
 #1---->8,9 assume no settling on hands
