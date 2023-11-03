@@ -4,6 +4,7 @@ require(triangle)
 #param changes
 num.student<-num.student.male+num.student.female
 
+percent.sick.student<-num.infect/num.student
 
 #inhalation rates----------------------------------------------------------------
 
@@ -83,6 +84,10 @@ H.mask.teacher<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)*0.3 # assuming for now 
 H.student<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)
 H.mask.student<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)*0.3 # assuming for now reduced by 30%
 
+#----------mask efficacies
+mask.student<-0.20 #placeholder
+mask.teacher<-0.20 #placeholder
+
 #------settling rate
 settle<-0.0003 #place holder
 
@@ -92,5 +97,5 @@ inactiv.air<-0.03 #place holder
 inactiv.surf<-0.03 #place holder
 
 #emissions-------------------
-RNAinfective<-1:1000 #placeholder
+RNAinfective<-1/1000 #placeholder
 emissions<-num.student*percent.sick.student*(rtriangle(iterations,a=10^0,b=10^5,c=10^0)/30)*RNAinfective*timestep #placeholder
