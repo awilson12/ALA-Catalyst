@@ -1,5 +1,13 @@
 require(shiny)
 require(shinydashboard)
+require(waffle)
+require(extrafont)
+require(showtext)
+require(tidyverse)
+require(hrbrthemes)
+require(echarts4r)
+require(devtools)
+require(echarts4r.assets)
 
 sidebar<-dashboardSidebar(
   sidebarMenu(
@@ -18,7 +26,10 @@ body <- dashboardBody(
     
     tabItem(tabName = "about",
             h2("What is this app all about?"),
-            p("Here is information about our app")
+            p("This application is meant to guide decision-making regarding interventions in schools meant to reduce 
+              the spread of respiratory viral diseases, such as flu or rhinovirus, the virus responsible for
+              the common cold. This application is also useful for educational purposes by demonstrating in
+              real time how single or bundled interventions can reduce risks for students and teachers.")
     ),
     tabItem(tabName= "calc",
             h2("Click through choices and see changes in risk in real time"),
@@ -27,19 +38,15 @@ body <- dashboardBody(
                      box(
                        title="Infection Risk output",status="primary",solidHeader=TRUE,
                        collabpsible=TRUE,
-                       plotOutput("infection",height=600),
-                       "Test test test",br(),
-                       "Test test test",br(),
-                       "test",br(),
-                       "test"
+                       echarts4rOutput("plot")
                      ),
                      box(
                        title="Human Inputs",solidHeader=TRUE,
                        "Student Settings",
-                       sliderInput("numstudentmale","Number of Male Students",min=1,max=20,value=1),
-                       sliderInput("numstudentfemale","Number of Female Students",1,20,1),
-                       sliderInput("numstudentinfect","Number of Infected Students",1,100,1),
-                       sliderInput("studentage","Average Student Age",1,10,1),
+                       sliderInput("numstudents","Number of Students",min=10,max=45,value=1),
+                       #sliderInput("numstudentfemale","Number of Female Students",1,20,1),
+                       sliderInput("fractinfect","% of Infected Students",1,100,1),
+                       sliderInput("studentage","Average Student Age",5,10,1),
                        "Teacher Settings",
                        selectInput("teachergender","Teacher Gender",choices=c("male","female")),
                        sliderInput("teacherage","Teacher Age",20,65,1),
@@ -84,7 +91,9 @@ shinyApp(
    ), #end of ui
   
    server=function(input,output){
-     output$infection<-renderPlot({
+     output$plot<-renderEcharts4r({
+       
+       rm(list = ls())
        
        volume<<-as.numeric(input$volume)
        pathogen<<-input$pathogen
@@ -104,18 +113,75 @@ shinyApp(
        
        source('risk_model.R')
        
+       #print(summary(risk.student.inhale))
+       
        #print(as.numeric(input$numstudentmale))
        
        frame.all<-data.frame(risks=c(risk.student.inhale,risk.student.face,risk.student.total,
                                      risk.teacher.inhale,risk.teacher.face,risk.teacher.total),
                              type=rep(c(rep("Inhalation",length(risk.student.inhale)),rep("Ingestion",length(risk.student.face)),rep("Total",length(risk.student.total))),2),
-                             person=c(rep("student",length(c(risk.student.inhale,risk.student.face,risk.student.total))),
-                                      rep("teacher",length(c(risk.teacher.inhale,risk.teacher.face,risk.teacher.total)))))
-       require(ggplot2)
+                             person=c(rep("Student",length(c(risk.student.inhale,risk.student.face,risk.student.total))),
+                                      rep("Teacher",length(c(risk.teacher.inhale,risk.teacher.face,risk.teacher.total)))))
+       print(summary(risk.student.total))
+       print(summary(risk.teacher.total))
        
-       A<-ggplot(frame.all)+geom_boxplot(aes(x=type,y=risks))+facet_wrap(~person,ncol=1)+
-         scale_y_continuous(trans="log10")
-       A
+       #print(frame.all$risks)
+       
+       
+       type<-c("Inhalation","Ingestion","Total")
+       person<-c("Student","Teacher")
+       type.all<-rep(NA,6)
+       person.all<-rep(NA,6)
+       risk<-rep(NA,6)
+       
+       for (i in 1:3){
+         for (j in 1:2){
+           if (i==1 & j==1){
+             risk<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
+             type.all<-type[i]
+             person.all<-person[j]
+           }else{
+             risktemp<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
+             typetemp<-type[i]
+             persontemp<-person[j]
+             risk<-c(risk,risktemp)
+             type.all<-c(type.all,typetemp)
+             person.all<-c(person.all,persontemp)
+           }
+           
+         }
+       }
+       
+       print(risk)
+       #print(type.all)
+       #print(person.all)
+       
+       #print(df22)
+       df22<-data.frame(y=risk*1000,type.all,x=person.all)
+       print(df22)
+       df22<-data.frame(y=round(risk*1000,digits=0),type.all,x=person.all)
+       df22teacher<-df22[type.all=="Total",]
+       df22teacher<-subset(df22teacher,select=-c(type.all))
+       
+       #print(summary(df22teacher$risk))
+       #print(df22teacher)
+       
+         df22teacher |> 
+           e_charts(x) |>
+           e_pictorial(y, symbol = ea_icons("user"), 
+                       symbolRepeat = TRUE,
+                       symbolSize = c(15, 15)) %>% 
+           e_theme("westeros") %>%
+           e_title("Number of Infections per 1,000 People") %>% 
+           e_flip_coords() %>%
+           # Hide Legend
+           e_legend(show = FALSE) %>%
+           # Remove Gridlines
+           e_x_axis(splitLine=list(show = TRUE)) %>%
+           e_y_axis(splitLine=list(show = TRUE)) %>%
+           # Format Label
+           e_labels(fontSize = 16, fontWeight ='bold', position = "right",offset=c(10,0)) 
+
      })
    }
 )

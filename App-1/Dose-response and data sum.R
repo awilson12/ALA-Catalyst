@@ -6,9 +6,9 @@ risk.student.inhale<-rep(NA,length(frame.dose$avg.dose.student.inhale))
 risk.student.face<-rep(NA,length(frame.dose$avg.dose.student.inhale))
 risk.student.total<-rep(NA,length(frame.dose$avg.dose.student.inhale))
 
-risk.teacher.inhale<-rep(NA,length(frame.dose$avg.dose.student.inhale))
-risk.teacher.face<-rep(NA,length(frame.dose$avg.dose.student.inhale))
-risk.teacher.total<-rep(NA,length(frame.dose$avg.dose.student.inhale))
+risk.teacher.inhale<-rep(NA,length(frame.dose$avg.dose.teacher.inhale))
+risk.teacher.face<-rep(NA,length(frame.dose$avg.dose.teacher.inhale))
+risk.teacher.total<-rep(NA,length(frame.dose$avg.dose.teacher.inhale))
 
 if (pathogen=="Rhinovirus"){
     k<-rtriangle(iterations,a=0.484,b=1,c=1)

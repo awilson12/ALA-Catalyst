@@ -1,18 +1,23 @@
+# Test inputs
+#volume<-2000
+#pathogen<-"Rhinovirus"
+#num.student.male<-15
+#num.student.female<-20
+#num.infect<-1
+#AER<-0.35
+#student.age<-12
+#teacher.gender<-"Male"
+#teacher.age<-40
+#studentmask=TRUE
+#teachermask=FALSE
+#deskmaterial<-"wood"
+#class.duration<-30
+#previous.sick<-FALSE
+
 source('risk_model.R')
-classroom.model(volume=as.numeric(input$volume),
-                pathogen=input$pathogen,
-                num.student.male=as.numeric(input$numstudentmale),
-                num.student.female=as.numeric(input$numstudentfemale),
-                num.infect=as.numeric(input$numstudentinfect),
-                AER=as.numeric(input$airexchange),
-                student.age=as.numeric(input$studentage),
-                teacher.gender=input$teachergender,
-                teacher.age=as.numeric(input$teacherage),
-                input$studentmask,
-                input$teachermask,
-                input$deskmaterial,
-                class.duration=as.numeric(input$classduration),
-                previous.sick=input$previoussick)
 
 
-source('Dose-response and data sum.R')
+#source('Dose-response and data sum.R')
+
+summary(risk.teacher.inhale)
+summary(risk.student.inhale)
