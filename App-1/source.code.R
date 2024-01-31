@@ -14,6 +14,18 @@
 #class.duration<-30
 #previous.sick<-FALSE
 
+require(shiny)
+require(shinydashboard)
+require(waffle)
+require(extrafont)
+require(showtext)
+require(tidyverse)
+require(hrbrthemes)
+require(echarts4r)
+require(devtools)
+require(echarts4r.assets)
+
+
 source('risk_model.R')
 
 

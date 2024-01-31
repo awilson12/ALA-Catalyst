@@ -13,10 +13,10 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
   lambda.3.1<-0 #assume no resuspension for now... 
     
 #3--->8, surfaces to student hands
-  lambda.3.8<-A.surface*num.student*S.H.student*H.student*TE.SH*timestep
+  lambda.3.8<-A.surface*numstudents*S.H.student*H.student*TE.SH*timestep
 
 #8--->3, student hands to surfaces
- lambda.8.3<- S.H.student*TE.HS*H.student*num.student
+ lambda.8.3<- S.H.student*TE.HS*H.student*numstudents
   
 #3--->9, surfaces to teacher hands
   lambda.3.9<-A.surface*S.H.teacher*TE.SH*timestep
@@ -26,9 +26,9 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
     
 #1---->4, room air to student respiratory tract
   if(student.mask==TRUE){
-    lambda.1.4<-(1/volume)*((inhalation.student.male*num.student.male)+(inhalation.student.female*num.student.female))*(1-mask.student)*num.student*timestep
+    lambda.1.4<-(1/volume)*(inhalation.student*numstudents)*(1-mask.student)*timestep
   }else{
-    lambda.1.4<-(1/volume)*((inhalation.student.male*num.student.male)+(inhalation.student.female*num.student.female))*num.student*timestep
+    lambda.1.4<-(1/volume)*(inhalation.student*numstudents)*timestep
   }
 
 #1---->5, room air to teacher respiratory tract
@@ -40,9 +40,9 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
 
 #8---->6, hands to student mucosal membrane
   if(student.mask==TRUE){
-    lambda.8.6<-S.F.student*TE.HF*num.student*H.mask.student*timestep
+    lambda.8.6<-S.F.student*TE.HF*numstudents*H.mask.student*timestep
   }else{
-    lambda.8.6<-S.F.student*TE.HF*num.student*H.student*timestep
+    lambda.8.6<-S.F.student*TE.HF*numstudents*H.student*timestep
   }
 
 #9---->7, hands to teacher mucosal membrane

@@ -8,6 +8,7 @@ require(hrbrthemes)
 require(echarts4r)
 require(devtools)
 require(echarts4r.assets)
+require(magrittr)
 
 sidebar<-dashboardSidebar(
   sidebarMenu(
@@ -97,9 +98,8 @@ shinyApp(
        
        volume<<-as.numeric(input$volume)
        pathogen<<-input$pathogen
-       num.student.male<<-as.numeric(input$numstudentmale)
-       num.student.female<<-as.numeric(input$numstudentfemale)
-       num.infect<<-as.numeric(input$numstudentinfect)
+       numstudents<<-as.numeric(input$numstudents)
+       fractinfect<<-as.numeric(input$fractinfect)
        AER<<-as.numeric(input$airexchange)
        student.age<<-as.numeric(input$studentage)
        teacher.gender<<-input$teachergender

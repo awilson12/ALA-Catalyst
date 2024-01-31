@@ -1,17 +1,13 @@
 require(truncdist)
 require(triangle)
 
-#param changes
-num.student<-num.student.male+num.student.female
-
-percent.sick.student<-num.infect/num.student
 
 #inhalation rates----------------------------------------------------------------
 
 #student inhalation rate
 
-  inhalation.student.male<-rtrunc(iterations,"norm",a=7.31,b=13.87,mean=10.59,sd=1.64)
-  inhalation.student.female<-rtrunc(iterations,"norm",a=7.06,b=12.61,mean=9.84,sd=1.39)
+  inhalation.student<-rtrunc(iterations,"norm",a=7.31,b=13.87,mean=10.59,sd=1.64)
+  #inhalation.student.female<-rtrunc(iterations,"norm",a=7.06,b=12.61,mean=9.84,sd=1.39)
   
 #teacher inhalation rate
    
@@ -98,4 +94,4 @@ inactiv.surf<-0.03 #place holder
 
 #emissions-------------------
 RNAinfective<-1/1000 #placeholder
-emissions<-num.student*percent.sick.student*(rtriangle(iterations,a=10^0,b=10^5,c=10^0)/30)*RNAinfective*timestep #placeholder
+emissions<-numstudents*fractinfect*(rtriangle(iterations,a=10^0,b=10^5,c=10^0)/30)*RNAinfective*timestep #placeholder

@@ -51,9 +51,9 @@ setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
     
     exposure.frames[[i]]<-sim.mat
     
-    avg.dose.student.inhale[i]<-sim.mat[4,length(2:(class.duration*(1/timestep)))]/(num.student.female+num.student.male)
+    avg.dose.student.inhale[i]<-sim.mat[4,length(2:(class.duration*(1/timestep)))]/(numstudents)
     dose.teacher.inhale[i]<-sim.mat[5,length(2:(class.duration*(1/timestep)))]
-    avg.dose.student.face[i]<-sim.mat[6,length(2:(class.duration*(1/timestep)))]/(num.student.female+num.student.male)
+    avg.dose.student.face[i]<-sim.mat[6,length(2:(class.duration*(1/timestep)))]/(numstudents)
     dose.teacher.face[i]<-sim.mat[7,length(2:(class.duration*(1/timestep)))]
   } #end of iterations through exposure frames
   exposure.frame.final<-exposure.frames
