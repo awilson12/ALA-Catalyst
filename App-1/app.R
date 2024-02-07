@@ -26,7 +26,7 @@ body <- dashboardBody(
             p("Welcome to the school health tool. This tool is a part of a larger resource for school health professionals, called ____________. The following tabs
               will provide information about the tool, how to use it, and access to the tool itself. A summary of the project at large can be seen in a digital
               flyer below."),
-            img(src='infosheet.png', align = "center")
+            img(src="infosheet.png",width=900)
     ),
     
     tabItem(tabName = "about",

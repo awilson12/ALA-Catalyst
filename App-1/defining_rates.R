@@ -39,18 +39,19 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
   }
 
 #8---->6, hands to student mucosal membrane
-  if(student.mask==TRUE){
+  
+  #if(student.mask==TRUE){
     lambda.8.6<-S.F.student*TE.HF*numstudents*H.mask.student*timestep
-  }else{
-    lambda.8.6<-S.F.student*TE.HF*numstudents*H.student*timestep
-  }
+  #}else{
+  #  lambda.8.6<-S.F.student*TE.HF*numstudents*H.student*timestep
+  #}
 
 #9---->7, hands to teacher mucosal membrane
-  if(teacher.mask==TRUE){
+  #if(teacher.mask==TRUE){
     lambda.9.7<-S.F.teacher*TE.HF*H.mask.teacher*timestep
-  }else{
-    lambda.9.7<-S.F.teacher*TE.HF*H.teacher*timestep
-  }
+  #}else{
+  #  lambda.9.7<-S.F.teacher*TE.HF*H.teacher*timestep
+  #}
 
 #1---->8,9 assume no settling on hands
 lambda.1.8<-0

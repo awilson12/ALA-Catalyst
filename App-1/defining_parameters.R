@@ -4,6 +4,8 @@ require(triangle)
 
 #inhalation rates----------------------------------------------------------------
 
+class.duration<-1 # assume 1 hr to simplify tool settings
+
 #student inhalation rate
 
   inhalation.student<-rtrunc(iterations,"norm",a=7.31,b=13.87,mean=10.59,sd=1.64)
@@ -12,51 +14,51 @@ require(triangle)
 #teacher inhalation rate
    
 if(teacher.age<31){
-  if(teacher.gender=="male"){
-    inhalation.teacher<-rtrunc(iterations,"norm",a=12.06,b=22.66,mean=17.36,sd=2.65)
-  }else{
-    inhalation.teacher<-rtrunc(iterations,"norm",a=9.33,b=17.57,mean=13.45,sd=2.06)
-  }
+  #if(teacher.gender=="male"){
+    inhalation.teacher<-rtrunc(iterations,"norm",a=12.06,b=22.66,mean=17.36,sd=2.65) #UPDATE FOR BOTH GENDERS. THESE ARE MALE #'S
+  #}else{
+   # inhalation.teacher<-rtrunc(iterations,"norm",a=9.33,b=17.57,mean=13.45,sd=2.06)
+  #}
 }else if (teacher.age>=31 & teacher.age<41){
-  if(teacher.gender=="male"){
-    inhalation.teacher<-rtrunc(iterations,"norm",a=12.76,b=21.00,mean=16.88,sd=2.06)
-  }else{
-    inhalation.teacher<-rtrunc(iterations,"norm",a=10.78,b=16.58,mean=13.68,sd=1.45)
-  }
+  #if(teacher.gender=="male"){
+    inhalation.teacher<-rtrunc(iterations,"norm",a=12.76,b=21.00,mean=16.88,sd=2.06) #UPDATE FOR BOTH GENDERS. THESE ARE MALE #'S
+  #}else{
+  #  inhalation.teacher<-rtrunc(iterations,"norm",a=10.78,b=16.58,mean=13.68,sd=1.45)
+  #}
 }else{
-  if(teacher.gender=="male"){
-    inhalation.teacher<-rtrunc(iterations,"norm",a=11.84,b=20.65,mean=16.24,sd=2.2)
-  }else{
-    inhalation.teacher<-rtrunc(iterations,"norm",a=8.91,b=15.71,mean=12.31,sd=1.7)
-  }
+  #if(teacher.gender=="male"){
+    inhalation.teacher<-rtrunc(iterations,"norm",a=11.84,b=20.65,mean=16.24,sd=2.2) #UPDATE FOR BOTH GENDERS. THESE ARE MALE #'S
+  #}else{
+  #  inhalation.teacher<-rtrunc(iterations,"norm",a=8.91,b=15.71,mean=12.31,sd=1.7)
+  #}
 }
 
 #Parameters related to fomite contacts---------------------------------------------
 
 if (pathogen!="Rhinovirus"){
-  if(desk.material=="steel"){
-    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.18,sd=0.20)
-    TE.SH>-rtrunc(iterations,"norm",a=0,b=1,mean=0.23,sd=0.19)
-  }else if (desk.material=="plastic"){
-    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.17,sd=0.19)
-    TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.28,sd=0.23)
-  }else{
-    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.13,sd=0.14)
+  #if(desk.material=="steel"){
+   # TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.18,sd=0.20)
+    #TE.SH>-rtrunc(iterations,"norm",a=0,b=1,mean=0.23,sd=0.19)
+  #}else if (desk.material=="plastic"){
+  #  TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.17,sd=0.19)
+  #  TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.28,sd=0.23)
+  #}else{
+    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.13,sd=0.14) #NOW ASSUMING WOOD MATERIAL FOR DESKS
     TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.05,sd=0.07)
-  }
+  #}
   
  
 }else{
-  if(desk.material=="steel"){
-    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.13,sd=0.12)
-    TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.34,sd=0.12)
-  }else if (desk.material=="plastic"){
-    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.16,sd=0.16)
-    TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.37,sd=0.14)
-  }else{
-    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.22,sd=0.17)
+  #if(desk.material=="steel"){
+  #  TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.13,sd=0.12)
+  #  TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.34,sd=0.12)
+  #}else if (desk.material=="plastic"){
+  #  TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.16,sd=0.16)
+  #  TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.37,sd=0.14)
+  #}else{
+    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.22,sd=0.17) #NOW ASSUMING WOOD MATERIAL FOR DESKS
     TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.30,sd=0.18)  
-  }
+  #}
   
 }
   
@@ -78,7 +80,9 @@ H.teacher<-rtriangle(iterations,a=2.7,b=8.3,c=5.00) #for now assuming same as st
 H.mask.teacher<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)*0.3 # assuming for now reduced by 30% & assuming same as student for now
 
 H.student<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)
-H.mask.student<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)*0.3 # assuming for now reduced by 30%
+if (studentmaskpercent!=0){
+  H.student<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)*0.3 # assuming for now reduced by 30%
+}
 
 #----------mask efficacies
 mask.student<-0.20 #placeholder
