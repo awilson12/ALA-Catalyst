@@ -4,7 +4,7 @@ require(triangle)
 
 #inhalation rates----------------------------------------------------------------
 
-class.duration<-1 # assume 1 hr to simplify tool settings
+class.duration<-8 # assume 8 hr (daily risk)
 
 #student inhalation rate
 

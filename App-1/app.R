@@ -270,7 +270,7 @@ shinyApp(
                        symbolRepeat = TRUE,
                        symbolSize = c(15, 15)) %>% 
            e_theme("westeros") %>%
-           e_title("Infections/1,000 People for 1-hr Class") %>% 
+           e_title("Daily Risk: Infections/1,000 People") %>% 
            e_flip_coords() %>%
            # Hide Legend
            e_legend(show = FALSE) %>%
