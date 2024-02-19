@@ -116,7 +116,8 @@ body <- dashboardBody(
                      #selectInput("teachergender","Teacher Gender",choices=c("male","female")),
                      sliderInput("teacherage","Teacher Age",20,65,1,ticks=FALSE),
                      #selectInput("previoussick","Classroom Previously Occupied by Sick Student",choices=c("TRUE","FALSE"))
-                     selectInput("pathogen","Pathogen",choices=c("Rhinovirus","SARS-CoV-2","Influenza","RSV"))
+                     selectInput("pathogen","Illness Type",choices=c("Common Cold","COVID-19","Flu","RSV"))
+                         #Common Cold - Rhinovirus, COVID-19 - SARS-CoV-2, Flu - Influenza A virus, RSV - RSV
                      
               ), #end of top right
                    column(width=3,offset=1, style='padding:0px;',
