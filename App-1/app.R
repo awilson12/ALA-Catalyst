@@ -107,37 +107,59 @@ body <- dashboardBody(
                 
             fluidRow(
                 column(3,offset=0, style='padding:0px;',
-                     
-                     title="Student & Teacher Settings",solidHeader=TRUE,
-                     sliderInput("numstudents","Number of Students",min=10,max=40,value=10,step=5,ticks=FALSE),
+                    selectInput("pathogen",tags$span(style="color: Purple;","Illness Type"),choices=c("Common Cold","COVID-19","Flu")),
+                    sliderInput("fractinfect",tags$span(style="color: Purple;","% of Students Infected"),0,100,0,step=10,ticks=FALSE),
+                       
+                    sliderInput("numstudents",tags$span(style="color: Blue;","Number of Students"),min=10,max=40,value=10,step=5,ticks=FALSE),
+                    selectInput("studentage",tags$span(style="color: Blue;","Grade Level"),choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
+                    sliderInput("teacherage",tags$span(style="color: Blue;","Teacher Age"),20,65,5,ticks=FALSE),
+                    selectInput("actlevel",label=tags$span(style="color: blue;","Class Type"),choices=c("General Ed","PE","SPED","Music")),
+                    selectInput("size",tags$span(style="color: blue;","Classroom Size"),choices=c("Small","Medium","Large")),
+                     actionButton(inputId="advclass",label=tags$span(style="color: blue;","Advanced Classroom Size")),
+                     conditionalPanel(
+                       condition=("input.advclass%2>0"),
+                       sliderInput(inputId="size",label=tags$span(style="color: blue;","Classroom Sq. Ft."),500,1000,100,ticks=FALSE)
+                     )
                      #sliderInput("numstudentfemale","Number of Female Students",1,20,1),
-                     sliderInput("fractinfect","% Infected Students",0,100,0,step=10,ticks=FALSE),
-                     selectInput("studentage","Grade Level",choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
-                     #selectInput("teachergender","Teacher Gender",choices=c("male","female")),
-                     sliderInput("teacherage","Teacher Age",20,65,1,ticks=FALSE),
-                     #selectInput("previoussick","Classroom Previously Occupied by Sick Student",choices=c("TRUE","FALSE"))
-                     selectInput("pathogen","Illness Type",choices=c("Common Cold","COVID-19","Flu","RSV"))
-                         #Common Cold - Rhinovirus, COVID-19 - SARS-CoV-2, Flu - Influenza A virus, RSV - RSV
+                     
                      
               ), #end of top right
                    column(width=3,offset=1, style='padding:0px;',
                          
-                            title="Environmental Intputs",solidHeader=TRUE,
-                            sliderInput("airexchange","Air Exchange Rate (1/hr)",min=0.2,max=3,value=0.2,step=0.2,ticks=FALSE),
+                            selectInput("airexchange","HVAC Settings",choices=c("Poor","Fair","Good","Great")),
+                            actionButton(inputId = "adv", label = "Advanced HVAC Options"),
+                          
+                            # If advanced variables are selected, open sample type and dose response.
+                             conditionalPanel(
+                              condition = ("input.adv%2>0"),
+                              sliderInput(inputId = "airexchange",
+                                        label = "Air Exchange Rate",
+                                        0.3, 4, 1,ticks=FALSE),
+                              selectInput(inputId = "filter type",label="Filter Type",
+                                          choices=c("HEPA","MERV 13","MERV 12"))),
+                            
+              
+                          
+                          #sliderInput("airexchange","Air Exchange Rate (1/hr)",min=0.2,max=3,value=0.2,step=0.2,ticks=FALSE),
                             #selectInput("deskmaterial","Student Desk Material",choices=c("wood","steel","plastic")),
                             #sliderInput("increasedvent","Increase Ventilation by %",min=10,max=100,value=10,ticks=FALSE),
-                            selectInput("portablehepa","Portable HEPA Filter On?",choices=c("Yes","No")),
+                            selectInput("portablehepa","Portable Air Purifier?",choices=c("Yes","No")),
                             selectInput("openwindows","Are windows open?",choices=c("Yes","No")),
                             selectInput("opendoor","Are doors open?",choices=c("Yes","No"))
                      ), #end of column
                    column(width=3,offset=1, style='padding:0px;',
 
-                            title="Intervention Settings",solidHeader=TRUE,
-                            sliderInput("volume","Classroom size (cubic ft)",min=1000,max=5000,value=1000,step=100,ticks=FALSE),
+  
                             sliderInput("studentmaskpercent","% Students Masked",min=0,max=100,value=10,ticks=FALSE),
-                            #selectInput("masktype","Mask Type",choices=c("cloth","surgical","KN95")),
                             selectInput("teachermask","Is the teacher masked?",choices=c("Yes","No")),
-                            selectInput("masktype","Mask Type",choices=c("Cloth","Surgical","KN95","N95"))
+                            actionButton(inputId = "advmask", label = "Advanced Teacher Mask Options"),
+                          
+                          # If advanced variables are selected, open sample type and dose response.
+                          conditionalPanel(
+                            condition = ("input.advmask%2>0"),
+                            selectInput(inputId = "teachermasktype",
+                                        label = "Mask Type",
+                                        choices=c("Cloth","Surgical","KN95","N95")))
                         ) #end of column
             ) #end of second row
             
@@ -155,6 +177,18 @@ shinyApp(
    ), #end of ui
   
    server=function(input,output){
+
+    # observeEvent(input$adv, {
+    #   if(input$airexchange>0){
+    #     shinyjs::show(id = c("adv"))
+    #   }else{
+    #     shinyjs::hide(id = c("adv"))
+    #   }
+    
+    # })
+     
+    # print(input$adv)
+     
      output$plot<-renderEcharts4r({
        
        rm(list = ls())
@@ -221,8 +255,8 @@ shinyApp(
                              type=rep(c(rep("Inhalation",length(risk.student.inhale)),rep("Ingestion",length(risk.student.face)),rep("Total",length(risk.student.total))),2),
                              person=c(rep("Student",length(c(risk.student.inhale,risk.student.face,risk.student.total))),
                                       rep("Teacher",length(c(risk.teacher.inhale,risk.teacher.face,risk.teacher.total)))))
-       print(summary(risk.student.total))
-       print(summary(risk.teacher.total))
+       #print(summary(risk.student.total))
+       #print(summary(risk.teacher.total))
        
        #print(frame.all$risks)
        
