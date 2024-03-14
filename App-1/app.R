@@ -114,20 +114,31 @@ body <- dashboardBody(
                     selectInput("studentage",tags$span(style="color: #003399;","Grade Level"),choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
                     sliderInput("teacherage",tags$span(style="color: #003399;","Teacher Age"),20,65,5,ticks=FALSE),
                     selectInput("actlevel",label=tags$span(style="color: #003399;","Class Type"),choices=c("General Ed","PE","SPED","Music")),
-                    selectInput("size",tags$span(style="color: #003399;","Classroom Size"),choices=c("Small","Medium","Large")),
-                     actionButton(inputId="advclass",label=tags$span(style="color: #003399;","Advanced Classroom Size Options")),
-                     conditionalPanel(
-                       condition=("input.advclass%2>0"),
-                       sliderInput(inputId="size",label=tags$span(style="color: #003399;","Classroom Sq. Ft."),500,1000,100,ticks=FALSE)
-                     )
+                    conditionalPanel(
+                      condition=("input.actlevel=='PE'"),
+                      selectInput("actlevelspace",label=tags$span(style="color: #003399;","PE Environment"),choices=c("Gym","Outdoors"))
+                    ),
+                    conditionalPanel(
+                      condition=("input.actlevel!='PE'"),
+                      selectInput("size",tags$span(style="color: #003399;","Classroom Size"),choices=c("Small","Medium","Large")),
+                      actionButton(inputId="advclass",label=tags$span(style="color: #003399;","Advanced Classroom Size Options")),
+                      conditionalPanel(
+                        condition=("input.advclass%2>0"),
+                        sliderInput(inputId="size",label=tags$span(style="color: #003399;","Classroom Sq. Ft."),500,1000,100,ticks=FALSE)
+                      )
+                    )
+                    
                      #sliderInput("numstudentfemale","Number of Female Students",1,20,1),
                      
                      
               ), #end of top right
                    column(width=3,offset=1, style='padding:0px;',
-                         
-                            selectInput("airexchange",choices=c("Poor","Fair","Good","Great"),label=tags$span(style="color: #6699FF;","Air Quality Settings")),
-                            actionButton(inputId = "adv", label=tags$span(style="color: #6699FF;","Advanced Air Quality Options")),
+                         conditionalPanel(
+                           condition=("input.actlevelspace!='Outdoors'"),
+                           selectInput("airexchange",choices=c("Poor","Fair","Good","Great"),label=tags$span(style="color: #6699FF;","Air Quality Settings")),
+                           actionButton(inputId = "adv", label=tags$span(style="color: #6699FF;","Advanced Air Quality Options")),
+                         ),
+                            
                           
                             # If advanced variables are selected, open sample type and dose response.
                              conditionalPanel(
@@ -181,11 +192,11 @@ shinyApp(
          volume<<-(input$size*10)*(0.3048)^3 #assuming height of 10 ft and then convert cubic ft to cubic m
        }else{
          if(input$size=="Small"){
-           volume<<-
+           volume<<-input$numstudnts*28*10*(0.3048)^3 #assuming 28 ft^2/student and then 10 ft height and convert to m^3
          }else if (input$size=="Medium"){
-           volume<<-
+           volume<<-input$numstudnts*32*10*(0.3048)^3
          }else{
-           volume<<-
+           volume<<-input$numstudnts*45*10*(0.3048)^3
          }
        }
        
@@ -196,16 +207,18 @@ shinyApp(
        
        if (input$airexchange>0){
          AER<<-as.numeric(input$airexchange)
-       }else{
+       }else if (actlevel!="PE"){
          if (input$airexchange=="Poor"){
-           AER<<-
+           AER<<-0.2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
          }else if (input$airexchange=="Fair"){
-           
+           AER<<-2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
          }else if (input$airexchange=="Good"){
-           
+           AER<<-6 #ASHRAE minimum, chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
          }else{
-           
+           AER<<-3 #ASHRAE upper range, on page 24: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
          }
+       }else{
+         
        }
        
        
@@ -224,12 +237,15 @@ shinyApp(
        }
        
        if(input$actlevel=="General Ed" | "SPED"){
-         activitylevel<<-
+         activitylevel<<- "Sedentary or passive activity" #singing somewhat similar to breathing/speaking
        }else if(input$actlevel=="PE"){
-         activitylevel<<-
+         activitylevel<<-"moderate intensity"
+         volume<<-60*38*18*(0.3048)^3 #chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.a2schools.org/site/handlers/filedownload.ashx?moduleinstanceid=5760&dataid=1158&FileName=gym_dimensions.pdf
+         
+         #assumptions about air exchange rate and classroom volume?
        }else {
          #Music
-         activitylevel<<-
+         activitylevel<<-"light intensity"
        }
        
 
