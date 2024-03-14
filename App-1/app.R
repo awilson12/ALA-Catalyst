@@ -107,18 +107,18 @@ body <- dashboardBody(
                 
             fluidRow(
                 column(3,offset=0, style='padding:0px;',
-                    selectInput("pathogen",tags$span(style="color: Purple;","Illness Type"),choices=c("Common Cold","COVID-19","Flu")),
-                    sliderInput("fractinfect",tags$span(style="color: Purple;","% of Students Infected"),0,100,0,step=10,ticks=FALSE),
+                    selectInput("pathogen",tags$span(style="color: #009999;","Illness Type"),choices=c("Common Cold","COVID-19","Flu")),
+                    sliderInput("fractinfect",tags$span(style="color: #009999;","% of Students Infected"),0,100,0,step=10,ticks=FALSE),
                        
-                    sliderInput("numstudents",tags$span(style="color: Blue;","Number of Students"),min=10,max=40,value=10,step=5,ticks=FALSE),
-                    selectInput("studentage",tags$span(style="color: Blue;","Grade Level"),choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
-                    sliderInput("teacherage",tags$span(style="color: Blue;","Teacher Age"),20,65,5,ticks=FALSE),
-                    selectInput("actlevel",label=tags$span(style="color: blue;","Class Type"),choices=c("General Ed","PE","SPED","Music")),
-                    selectInput("size",tags$span(style="color: blue;","Classroom Size"),choices=c("Small","Medium","Large")),
-                     actionButton(inputId="advclass",label=tags$span(style="color: blue;","Advanced Classroom Size")),
+                    sliderInput("numstudents",tags$span(style="color: #003399;","Number of Students"),min=10,max=40,value=10,step=5,ticks=FALSE),
+                    selectInput("studentage",tags$span(style="color: #003399;","Grade Level"),choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
+                    sliderInput("teacherage",tags$span(style="color: #003399;","Teacher Age"),20,65,5,ticks=FALSE),
+                    selectInput("actlevel",label=tags$span(style="color: #003399;","Class Type"),choices=c("General Ed","PE","SPED","Music")),
+                    selectInput("size",tags$span(style="color: #003399;","Classroom Size"),choices=c("Small","Medium","Large")),
+                     actionButton(inputId="advclass",label=tags$span(style="color: #003399;","Advanced Classroom Size Options")),
                      conditionalPanel(
                        condition=("input.advclass%2>0"),
-                       sliderInput(inputId="size",label=tags$span(style="color: blue;","Classroom Sq. Ft."),500,1000,100,ticks=FALSE)
+                       sliderInput(inputId="size",label=tags$span(style="color: #003399;","Classroom Sq. Ft."),500,1000,100,ticks=FALSE)
                      )
                      #sliderInput("numstudentfemale","Number of Female Students",1,20,1),
                      
@@ -126,33 +126,28 @@ body <- dashboardBody(
               ), #end of top right
                    column(width=3,offset=1, style='padding:0px;',
                          
-                            selectInput("airexchange","HVAC Settings",choices=c("Poor","Fair","Good","Great")),
-                            actionButton(inputId = "adv", label = "Advanced HVAC Options"),
+                            selectInput("airexchange",choices=c("Poor","Fair","Good","Great"),label=tags$span(style="color: #6699FF;","Air Quality Settings")),
+                            actionButton(inputId = "adv", label=tags$span(style="color: #6699FF;","Advanced Air Quality Options")),
                           
                             # If advanced variables are selected, open sample type and dose response.
                              conditionalPanel(
                               condition = ("input.adv%2>0"),
                               sliderInput(inputId = "airexchange",
-                                        label = "Air Exchange Rate",
+                                          label=tags$span(style="color: #6699FF;","Air Exchange Rate"),
                                         0.3, 4, 1,ticks=FALSE),
-                              selectInput(inputId = "filter type",label="Filter Type",
-                                          choices=c("HEPA","MERV 13","MERV 12"))),
-                            
-              
-                          
-                          #sliderInput("airexchange","Air Exchange Rate (1/hr)",min=0.2,max=3,value=0.2,step=0.2,ticks=FALSE),
-                            #selectInput("deskmaterial","Student Desk Material",choices=c("wood","steel","plastic")),
-                            #sliderInput("increasedvent","Increase Ventilation by %",min=10,max=100,value=10,ticks=FALSE),
-                            selectInput("portablehepa","Portable Air Purifier?",choices=c("Yes","No")),
-                            selectInput("openwindows","Are windows open?",choices=c("Yes","No")),
-                            selectInput("opendoor","Are doors open?",choices=c("Yes","No"))
+                              selectInput(inputId = "filtertype",label=tags$span(style="color: #6699FF;","Filter Type"),
+                                          choices=c("HEPA","MERV 13","MERV 12")),
+                              selectInput("portablehepa",label=tags$span(style="color: #6699FF;","Portable Air Purifier"),choices=c("Yes","No")),
+                              selectInput("openwindows",label=tags$span(style="color: #6699FF;","Are windows open?"),choices=c("Yes","No")),
+                              selectInput("opendoor",label=tags$span(style="color: #6699FF;","Are doors open?"),choices=c("Yes","No"))),
+
                      ), #end of column
                    column(width=3,offset=1, style='padding:0px;',
 
   
-                            sliderInput("studentmaskpercent","% Students Masked",min=0,max=100,value=10,ticks=FALSE),
-                            selectInput("teachermask","Is the teacher masked?",choices=c("Yes","No")),
-                            actionButton(inputId = "advmask", label = "Advanced Teacher Mask Options"),
+                            sliderInput("studentmaskpercent",label=tags$span(style="color: #660000;","Percent of Students Masked"),min=0,max=100,value=10,ticks=FALSE),
+                            selectInput("teachermask",label=tags$span(style="color: #660000;","Is the teacher masked?"),choices=c("Yes","No")),
+                            actionButton(inputId = "advmask", label=tags$span(style="color: #660000;","Advanced Teacher Mask Options")),
                           
                           # If advanced variables are selected, open sample type and dose response.
                           conditionalPanel(
@@ -178,26 +173,41 @@ shinyApp(
   
    server=function(input,output){
 
-    # observeEvent(input$adv, {
-    #   if(input$airexchange>0){
-    #     shinyjs::show(id = c("adv"))
-    #   }else{
-    #     shinyjs::hide(id = c("adv"))
-    #   }
-    
-    # })
-     
-    # print(input$adv)
-     
      output$plot<-renderEcharts4r({
        
        rm(list = ls())
        
-       volume<<-as.numeric(input$volume)
-       pathogen<<-input$pathogen
+       if(input$size>0){
+         volume<<-(input$size*10)*(0.3048)^3 #assuming height of 10 ft and then convert cubic ft to cubic m
+       }else{
+         if(input$size=="Small"){
+           volume<<-
+         }else if (input$size=="Medium"){
+           volume<<-
+         }else{
+           volume<<-
+         }
+       }
+       
+       pathogen<<-input$pathogen 
+       
        numstudents<<-as.numeric(input$numstudents)
        fractinfect<<-as.numeric(input$fractinfect)
-       AER<<-as.numeric(input$airexchange)
+       
+       if (input$airexchange>0){
+         AER<<-as.numeric(input$airexchange)
+       }else{
+         if (input$airexchange=="Poor"){
+           AER<<-
+         }else if (input$airexchange=="Fair"){
+           
+         }else if (input$airexchange=="Good"){
+           
+         }else{
+           
+         }
+       }
+       
        
        if(input$studentage=="Kindergarten"){
          student.age<<-5
@@ -213,21 +223,34 @@ shinyApp(
          student.age<<-10
        }
        
+       if(input$actlevel=="General Ed" | "SPED"){
+         activitylevel<<-
+       }else if(input$actlevel=="PE"){
+         activitylevel<<-
+       }else {
+         #Music
+         activitylevel<<-
+       }
        
-       
-       student.age<<-as.numeric(input$studentage)
-       #teacher.gender<<-input$teachergender
-       teacher.age<<-as.numeric(input$teacherage)
-       #student.mask<<-input$studentmask
+
        if(input$teachermask=="Yes"){
          teacher.mask<<-TRUE
        }else{
          teacher.mask<<-FALSE
        }
-       #desk.material<<-input$deskmaterial
-       #class.duration<<-as.numeric(input$classduration)
-       #previous.sick<<-input$previoussick
-       studentmaskpercent<<-as.numeric(input$studentmaskpercent)
+       
+       if(input$teachermasktype=="Cloth"){
+         
+       }else if (input$teachermasktype=="Surgical"){
+         
+       }else if (input$teachermasktype=="KN95"){
+         
+       }else{
+         
+       }
+
+       studentmaskpercent<<-as.numeric(input$studentmaskpercent)/100
+       
        if(input$openwindows=="Yes"){
          openwindows<<-TRUE
        }else{
@@ -255,10 +278,6 @@ shinyApp(
                              type=rep(c(rep("Inhalation",length(risk.student.inhale)),rep("Ingestion",length(risk.student.face)),rep("Total",length(risk.student.total))),2),
                              person=c(rep("Student",length(c(risk.student.inhale,risk.student.face,risk.student.total))),
                                       rep("Teacher",length(c(risk.teacher.inhale,risk.teacher.face,risk.teacher.total)))))
-       #print(summary(risk.student.total))
-       #print(summary(risk.teacher.total))
-       
-       #print(frame.all$risks)
        
        
        type<-c("Inhalation","Ingestion","Total")
