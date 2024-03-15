@@ -108,7 +108,7 @@ body <- dashboardBody(
             fluidRow(
                 column(3,offset=0, style='padding:0px;',
                     selectInput("pathogen",tags$span(style="color: #009999;","Illness Type"),choices=c("Common Cold","COVID-19","Flu")),
-                    sliderInput("fractinfect",tags$span(style="color: #009999;","% of Students Infected"),0,100,0,step=10,ticks=FALSE),
+                    sliderInput("fractinfect",tags$span(style="color: #009999;","% of Students Infected"),1,100,0,step=10,ticks=FALSE),
                        
                     sliderInput("numstudents",tags$span(style="color: #003399;","Number of Students"),min=10,max=40,value=10,step=5,ticks=FALSE),
                     selectInput("studentage",tags$span(style="color: #003399;","Grade Level"),choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
@@ -334,6 +334,8 @@ shinyApp(
        #print(summary(df22teacher$risk))
        #print(df22teacher)
        
+       #WANT TO MAKE CONDITIONAL TEXT HERE THAT WILL SHOW UP WITH SETTING IS OUTDOORS TO SAY THAT RISKS ARE VERY LOW
+       
          df22teacher |> 
            e_charts(x) |>
            e_pictorial(y, symbol = ea_icons("user"), 
@@ -349,6 +351,7 @@ shinyApp(
            e_y_axis(splitLine=list(show = TRUE)) %>%
            # Format Label
            e_labels(fontSize = 16, fontWeight ='bold', position = "right",offset=c(10,0)) 
+      
 
      })
    }
