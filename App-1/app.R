@@ -165,7 +165,7 @@ body <- dashboardBody(
                             condition = ("input.advmask%2>0"),
                             selectInput(inputId = "teachermasktype",
                                         label = "Mask Type",
-                                        choices=c("Cloth","Surgical","KN95","N95")))
+                                        choices=c("Cloth","Surgical","KN95")))
                         ) #end of column
             ) #end of second row
             
@@ -204,6 +204,8 @@ shinyApp(
        
        numstudents<<-as.numeric(input$numstudents)
        fractinfect<<-as.numeric(input$fractinfect)
+       
+       teachermasktype<<-input$teachermasktype
        
        if (input$airexchange>0){
          AER<<-as.numeric(input$airexchange)
