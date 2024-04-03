@@ -109,10 +109,8 @@ body <- dashboardBody(
                 column(3,offset=0, style='padding:0px;',
                     selectInput("pathogen",tags$span(style="color: #009999;","Illness Type"),choices=c("Common Cold","COVID-19","Flu")),
                     sliderInput("fractinfect",tags$span(style="color: #009999;","% of Students Infected"),1,100,0,step=10,ticks=FALSE),
-                       
                     sliderInput("numstudents",tags$span(style="color: #003399;","Number of Students"),min=10,max=40,value=10,step=5,ticks=FALSE),
                     selectInput("studentage",tags$span(style="color: #003399;","Grade Level"),choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
-                    sliderInput("teacherage",tags$span(style="color: #003399;","Teacher Age"),20,65,5,ticks=FALSE),
                     selectInput("actlevel",label=tags$span(style="color: #003399;","Class Type"),choices=c("General Ed","PE","SPED","Music")),
                     conditionalPanel(
                       condition=("input.actlevel=='PE'"),
@@ -128,9 +126,7 @@ body <- dashboardBody(
                       )
                     )
                     
-                     #sliderInput("numstudentfemale","Number of Female Students",1,20,1),
-                     
-                     
+           
               ), #end of top right
                    column(width=3,offset=1, style='padding:0px;',
                          conditionalPanel(
@@ -188,108 +184,22 @@ shinyApp(
        
        rm(list = ls())
        
-       if(input$size>0){
-         volume<<-(input$size*10)*(0.3048)^3 #assuming height of 10 ft and then convert cubic ft to cubic m
-       }else{
-         if(input$size=="Small"){
-           volume<<-input$numstudnts*28*10*(0.3048)^3 #assuming 28 ft^2/student and then 10 ft height and convert to m^3
-         }else if (input$size=="Medium"){
-           volume<<-input$numstudnts*32*10*(0.3048)^3
-         }else{
-           volume<<-input$numstudnts*45*10*(0.3048)^3
-         }
-       }
-       
+       size<<-input$size
+       studentmaskpercent<<-input$studentmaskpercent
        pathogen<<-input$pathogen 
-       
        numstudents<<-as.numeric(input$numstudents)
        fractinfect<<-as.numeric(input$fractinfect)
-       
        teachermasktype<<-input$teachermasktype
-       
-       if (input$airexchange>0){
-         AER<<-as.numeric(input$airexchange)
-       }else if (actlevel!="PE"){
-         if (input$airexchange=="Poor"){
-           AER<<-0.2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
-         }else if (input$airexchange=="Fair"){
-           AER<<-2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
-         }else if (input$airexchange=="Good"){
-           AER<<-6 #ASHRAE minimum, chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
-         }else{
-           AER<<-3 #ASHRAE upper range, on page 24: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
-         }
-       }else{
-         
-       }
-       
-       
-       if(input$studentage=="Kindergarten"){
-         student.age<<-5
-       }else if (input$studentage=="1st"){
-         student.age<<-6
-       }else if (input$studentage=="2nd"){
-         student.age<<-7
-       }else if (input$studentage=="3rd"){
-         student.age<<-8
-       }else if (input$studentage=="4th"){
-         student.age<<-9
-       }else{
-         student.age<<-10
-       }
-       
-       if(input$actlevel=="General Ed" | "SPED"){
-         activitylevel<<- "Sedentary or passive activity" #singing somewhat similar to breathing/speaking
-       }else if(input$actlevel=="PE"){
-         activitylevel<<-"moderate intensity"
-         volume<<-60*38*18*(0.3048)^3 #chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.a2schools.org/site/handlers/filedownload.ashx?moduleinstanceid=5760&dataid=1158&FileName=gym_dimensions.pdf
-         
-         #assumptions about air exchange rate and classroom volume?
-       }else {
-         #Music
-         activitylevel<<-"light intensity"
-       }
-       
-
-       if(input$teachermask=="Yes"){
-         teacher.mask<<-TRUE
-       }else{
-         teacher.mask<<-FALSE
-       }
-       
-       if(input$teachermasktype=="Cloth"){
-         
-       }else if (input$teachermasktype=="Surgical"){
-         
-       }else if (input$teachermasktype=="KN95"){
-         
-       }else{
-         
-       }
-
-       studentmaskpercent<<-as.numeric(input$studentmaskpercent)/100
-       
-       if(input$openwindows=="Yes"){
-         openwindows<<-TRUE
-       }else{
-         openwindows<<-FALSE
-       }
-       if(input$opendoor=="Yes"){
-         opendoor<<-TRUE
-       }else{
-         opendoor<<-FALSE
-       }
-       if(input$portablehepa=="Yes"){
-         hepa<<-TRUE
-       }else{
-         hepa<<-FALSE
-       }
+       airexchange<<-input$airexchange
+       actlevel<<-input$actlevel
+       studentage<<-input$studentage
+       teachermask<<-input$teachermask
+       openwindows<<-input$openwindows
+       opendoor<<-input$opendoor
+       hepa<<-input$portablehepa
+       filtertype<<-input$filtertype
        
        source('risk_model.R')
-       
-       #print(summary(risk.student.inhale))
-       
-       #print(as.numeric(input$numstudentmale))
        
        frame.all<-data.frame(risks=c(risk.student.inhale,risk.student.face,risk.student.total,
                                      risk.teacher.inhale,risk.teacher.face,risk.teacher.total),
@@ -322,9 +232,7 @@ shinyApp(
          }
        }
        
-       print(risk)
-       #print(type.all)
-       #print(person.all)
+       
        
        #print(df22)
        df22<-data.frame(y=risk*1000,type.all,x=person.all)
@@ -353,7 +261,6 @@ shinyApp(
            e_y_axis(splitLine=list(show = TRUE)) %>%
            # Format Label
            e_labels(fontSize = 16, fontWeight ='bold', position = "right",offset=c(10,0)) 
-      
 
      })
    }

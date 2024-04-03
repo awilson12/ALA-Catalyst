@@ -29,7 +29,5 @@ require(echarts4r.assets)
 source('risk_model.R')
 
 
-#source('Dose-response and data sum.R')
-
 summary(risk.teacher.inhale)
 summary(risk.student.inhale)

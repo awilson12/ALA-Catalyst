@@ -7,7 +7,7 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
   lambda.1.2<-AER*(1/60)*timestep
 
 #1---->3, room air to surfaces
-  lambda.1.3<-settle*timestep
+  lambda.1.3<-settle
   
 #3---->1, surfaces to room air (resuspension)
   lambda.3.1<-0 #assume no resuspension for now... 
@@ -25,44 +25,35 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
   lambda.9.3<-S.H.teacher*TE.HS*H.teacher*timestep
     
 #1---->4, room air to student respiratory tract
-  if(student.mask==TRUE){
-    lambda.1.4<-(1/volume)*(inhalation.student*numstudents)*(1-mask.student)*timestep
+  if(studentmaskpercent!=0){
+    lambda.1.4<-(1/volume)*(inhalation.student*numstudents)*(1-mask.student)
   }else{
-    lambda.1.4<-(1/volume)*(inhalation.student*numstudents)*timestep
+    lambda.1.4<-(1/volume)*(inhalation.student*numstudents)
   }
 
 #1---->5, room air to teacher respiratory tract
   if(teacher.mask==TRUE){
-    lambda.1.5<-(1/volume)*(1-mask.teacher)*inhalation.teacher*timestep
+    lambda.1.5<-(1/volume)*(1-mask.teacher)*inhalation.teacher
   }else{
-    lambda.1.5<-(1/volume)*inhalation.teacher*timestep
+    lambda.1.5<-(1/volume)*inhalation.teacher
   }
 
 #8---->6, hands to student mucosal membrane
-  
-  #if(student.mask==TRUE){
-    lambda.8.6<-S.F.student*TE.HF*numstudents*H.mask.student*timestep
-  #}else{
-  #  lambda.8.6<-S.F.student*TE.HF*numstudents*H.student*timestep
-  #}
+    lambda.8.6<-S.F.student*TE.HF*numstudents*H.student
 
 #9---->7, hands to teacher mucosal membrane
-  #if(teacher.mask==TRUE){
-    lambda.9.7<-S.F.teacher*TE.HF*H.mask.teacher*timestep
-  #}else{
-  #  lambda.9.7<-S.F.teacher*TE.HF*H.teacher*timestep
-  #}
+    lambda.9.7<-S.F.teacher*TE.HF*H.teacher*timestep
 
 #1---->8,9 assume no settling on hands
 lambda.1.8<-0
 lambda.1.9<-0
 
 #1---->10, room air to inactivation
-lambda.1.10<-inactiv.air*timestep
+lambda.1.10<-inactiv.air
 
 #8,9-->10, hands to inactivation
-lambda.8.10<-inactiv.hands*timestep
-lambda.9.10<-inactiv.hands*timestep
+lambda.8.10<-inactiv.hands
+lambda.9.10<-inactiv.hands
 
 #3--->10, surfaces to inactivation
-lambda.3.10<-inactiv.surf*timestep
+lambda.3.10<-inactiv.surf

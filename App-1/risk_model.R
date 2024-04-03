@@ -1,6 +1,7 @@
 
-setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
+#setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
 
+setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
   
   timestep<-0.1 #fraction of a minute
   iterations<-100
@@ -27,25 +28,19 @@ setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
     
     #generating new frame to save # of viruses over time across all states
     sim.mat<-matrix(nrow=statesnum,ncol=times)
-    
-    #set initial concentrations
-    #if(previous.sick==FALSE){
-      #assume no contamination from previous class
-      sim.mat[,1]<-0
-    #}else{
-      #assume contamination in air and on surfaces from previous class
-    #  sim.mat[1,1]<-100 #place holder
-    #  sim.mat[2,1]<-0
-    #  sim.mat[3,1]<-100 #place holder
-    #  sim.mat[4:10,1]<-0
-    #}
+    sim.mat[,1]<-0
+
     
     for(k in 2:(class.duration*(1/timestep))){
       
        sim.mat[,k]<-sim.mat[,k-1]%*%Ptemp
+       sim.mat[1,k]<-sim.mat[1,k]+air.emissions[i]
+       if(!is.na(droplet.emissions[i])){
+         sim.mat[3,k]<-sim.mat[3,k]+droplet.emissions[i]
+       }else{
+         sim.mat[3,k]<-sim.mat[3,k]
+       }
        
-       sim.mat[1,k]<-sim.mat[1,k]+emissions[i]
-       #print(k)
 
     }       #end of exposure model
     
@@ -55,7 +50,9 @@ setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
     dose.teacher.inhale[i]<-sim.mat[5,length(2:(class.duration*(1/timestep)))]
     avg.dose.student.face[i]<-sim.mat[6,length(2:(class.duration*(1/timestep)))]/(numstudents)
     dose.teacher.face[i]<-sim.mat[7,length(2:(class.duration*(1/timestep)))]
+    
   } #end of iterations through exposure frames
+  
   exposure.frame.final<-exposure.frames
   frame.dose<-data.frame(avg.dose.student.inhale,avg.dose.student.face,total.student=avg.dose.student.inhale+avg.dose.student.face,
                          dose.teacher.inhale,dose.teacher.face,total.teacher=dose.teacher.inhale+dose.teacher.face)

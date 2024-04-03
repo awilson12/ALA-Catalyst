@@ -42,7 +42,7 @@ P.7.total<-c(0,0,0,0,0,0,1,0,0,0)
 
 #Row 8 (student hands)------------------------
 
-lambdas.8<-c(0,0,lambda.8.3[i],0,0,lambda.8.6[i],0,0,lambda.8.10)
+lambdas.8<-c(0,0,lambda.8.3[i],0,0,lambda.8.6[i],0,0,lambda.8.10[i])
 lambda.8.T<-sum(lambdas.8)
 P.8.8<-exp(-lambda.8.T)
 P.8<-(1-P.8.8)*(lambdas.8/lambda.8.T)
@@ -50,7 +50,7 @@ P.8.total<-c(P.8[1:7],P.8.8,P.8[8:9])
 
 #Row 9 (teacher hands)------------------------
 
-lambdas.9<-c(0,0,lambda.9.3[i],0,0,0,lambda.9.7[i],0,lambda.9.10)
+lambdas.9<-c(0,0,lambda.9.3[i],0,0,0,lambda.9.7[i],0,lambda.9.10[i])
 lambda.9.T<-sum(lambdas.9)
 P.9.9<-exp(-lambda.9.T)
 P.9<-(1-P.9.9)*(lambdas.9/lambda.9.T)

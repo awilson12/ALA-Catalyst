@@ -110,12 +110,8 @@ body <- dashboardBody(
                      
                      title="Student & Teacher Settings",solidHeader=TRUE,
                      sliderInput("numstudents","Number of Students",min=10,max=40,value=10,step=5,ticks=FALSE),
-                     #sliderInput("numstudentfemale","Number of Female Students",1,20,1),
                      sliderInput("fractinfect","% Infected Students",0,100,0,step=10,ticks=FALSE),
                      selectInput("studentage","Grade Level",choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
-                     #selectInput("teachergender","Teacher Gender",choices=c("male","female")),
-                     sliderInput("teacherage","Teacher Age",20,65,1,ticks=FALSE),
-                     #selectInput("previoussick","Classroom Previously Occupied by Sick Student",choices=c("TRUE","FALSE"))
                      selectInput("pathogen","Pathogen",choices=c("Rhinovirus","SARS-CoV-2","Influenza","RSV"))
                      
               ), #end of top right
@@ -123,8 +119,6 @@ body <- dashboardBody(
                          
                             title="Environmental Intputs",solidHeader=TRUE,
                             sliderInput("airexchange","Air Exchange Rate (1/hr)",min=0.2,max=3,value=0.2,step=0.2,ticks=FALSE),
-                            #selectInput("deskmaterial","Student Desk Material",choices=c("wood","steel","plastic")),
-                            #sliderInput("increasedvent","Increase Ventilation by %",min=10,max=100,value=10,ticks=FALSE),
                             selectInput("portablehepa","Portable HEPA Filter On?",choices=c("Yes","No")),
                             selectInput("openwindows","Are windows open?",choices=c("Yes","No")),
                             selectInput("opendoor","Are doors open?",choices=c("Yes","No"))
@@ -134,7 +128,6 @@ body <- dashboardBody(
                             title="Intervention Settings",solidHeader=TRUE,
                             sliderInput("volume","Classroom size (cubic ft)",min=1000,max=5000,value=1000,step=100,ticks=FALSE),
                             sliderInput("studentmaskpercent","% Students Masked",min=0,max=100,value=10,ticks=FALSE),
-                            #selectInput("masktype","Mask Type",choices=c("cloth","surgical","KN95")),
                             selectInput("teachermask","Is the teacher masked?",choices=c("Yes","No")),
                             selectInput("masktype","Mask Type",choices=c("Cloth","Surgical","KN95","N95"))
                         ) #end of column
@@ -181,9 +174,6 @@ shinyApp(
        
        
        student.age<<-as.numeric(input$studentage)
-       #teacher.gender<<-input$teachergender
-       teacher.age<<-as.numeric(input$teacherage)
-       #student.mask<<-input$studentmask
        if(input$teachermask=="Yes"){
          teacher.mask<<-TRUE
        }else{
