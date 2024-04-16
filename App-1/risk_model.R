@@ -1,10 +1,12 @@
 
-#setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
+setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
 
-setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
+#setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
   
   timestep<-0.1 #fraction of a minute
-  iterations<-100
+  iterations<-1000
+  
+  set.seed(34)
   
   #-----------------DEFINING PARAMETERS
   source('defining_parameters.R')
@@ -61,3 +63,39 @@ setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
 
 
 source("Dose-response and data sum.R")
+  
+  
+  frame.all<-data.frame(risks=c(risk.student.inhale,risk.student.face,risk.student.total,
+                                risk.teacher.inhale,risk.teacher.face,risk.teacher.total),
+                        type=rep(c(rep("Inhalation",length(risk.student.inhale)),rep("Ingestion",length(risk.student.face)),rep("Total",length(risk.student.total))),2),
+                        person=c(rep("Student",length(c(risk.student.inhale,risk.student.face,risk.student.total))),
+                                 rep("Teacher",length(c(risk.teacher.inhale,risk.teacher.face,risk.teacher.total)))))
+  
+  
+  type<-c("Inhalation","Ingestion","Total")
+  person<-c("Student","Teacher")
+  type.all<-rep(NA,6)
+  person.all<-rep(NA,6)
+  risk<-rep(NA,6)
+  
+  for (i in 1:3){
+    for (j in 1:2){
+      if (i==1 & j==1){
+        risk<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
+        type.all<-type[i]
+        person.all<-person[j]
+      }else{
+        risktemp<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
+        typetemp<-type[i]
+        persontemp<-person[j]
+        risk<-c(risk,risktemp)
+        type.all<-c(type.all,typetemp)
+        person.all<-c(person.all,persontemp)
+      }
+      
+    }
+  }
+  
+  df22<-data.frame(y=signif(risk*1000000,digits=2),type.all,x=person.all)
+  df22teacher<-df22[type.all=="Total",]
+  df22teacher<-subset(df22teacher,select=-c(type.all))

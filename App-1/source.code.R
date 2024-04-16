@@ -29,5 +29,8 @@ require(echarts4r.assets)
 source('risk_model.R')
 
 
-summary(risk.teacher.inhale)
-summary(risk.student.inhale)
+
+
+
+#summary(risk.teacher.inhale)
+#summary(risk.student.inhale)

@@ -200,46 +200,11 @@ shinyApp(
        filtertype<<-input$filtertype
        
        source('risk_model.R')
-       
-       frame.all<-data.frame(risks=c(risk.student.inhale,risk.student.face,risk.student.total,
-                                     risk.teacher.inhale,risk.teacher.face,risk.teacher.total),
-                             type=rep(c(rep("Inhalation",length(risk.student.inhale)),rep("Ingestion",length(risk.student.face)),rep("Total",length(risk.student.total))),2),
-                             person=c(rep("Student",length(c(risk.student.inhale,risk.student.face,risk.student.total))),
-                                      rep("Teacher",length(c(risk.teacher.inhale,risk.teacher.face,risk.teacher.total)))))
-       
-       
-       type<-c("Inhalation","Ingestion","Total")
-       person<-c("Student","Teacher")
-       type.all<-rep(NA,6)
-       person.all<-rep(NA,6)
-       risk<-rep(NA,6)
-       
-       for (i in 1:3){
-         for (j in 1:2){
-           if (i==1 & j==1){
-             risk<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
-             type.all<-type[i]
-             person.all<-person[j]
-           }else{
-             risktemp<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
-             typetemp<-type[i]
-             persontemp<-person[j]
-             risk<-c(risk,risktemp)
-             type.all<-c(type.all,typetemp)
-             person.all<-c(person.all,persontemp)
-           }
-           
-         }
-       }
-       
-       
-       
+
        #print(df22)
-       df22<-data.frame(y=risk*1000,type.all,x=person.all)
-       print(df22)
-       df22<-data.frame(y=round(risk*1000,digits=0),type.all,x=person.all)
-       df22teacher<-df22[type.all=="Total",]
-       df22teacher<-subset(df22teacher,select=-c(type.all))
+       #df22<-data.frame(y=risk*1000,type.all,x=person.all)
+       #print(df22)
+      
        
        #print(summary(df22teacher$risk))
        #print(df22teacher)
