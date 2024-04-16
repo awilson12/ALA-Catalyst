@@ -143,10 +143,10 @@ body <- dashboardBody(
                                           label=tags$span(style="color: #6699FF;","Air Exchange Rate"),
                                         0.3, 4, 1,ticks=FALSE),
                               selectInput(inputId = "filtertype",label=tags$span(style="color: #6699FF;","Filter Type"),
-                                          choices=c("HEPA","MERV 13","MERV 12")),
+                                          choices=c("HEPA","MERV 13","MERV 8")),
                               selectInput("portablehepa",label=tags$span(style="color: #6699FF;","Portable Air Purifier"),choices=c("Yes","No")),
-                              selectInput("openwindows",label=tags$span(style="color: #6699FF;","Are windows open?"),choices=c("Yes","No")),
-                              selectInput("opendoor",label=tags$span(style="color: #6699FF;","Are doors open?"),choices=c("Yes","No"))),
+                              selectInput("openwindowsdoors",label=tags$span(style="color: #6699FF;","Are windows/doors open?"),choices=c("Yes","No"))),
+                              #selectInput("opendoor",label=tags$span(style="color: #6699FF;","Are doors open?"),choices=c("Yes","No"))),
 
                      ), #end of column
                    column(width=3,offset=1, style='padding:0px;',
@@ -194,8 +194,7 @@ shinyApp(
        actlevel<<-input$actlevel
        studentage<<-input$studentage
        teachermask<<-input$teachermask
-       openwindows<<-input$openwindows
-       opendoor<<-input$opendoor
+       openwindowsdoors<<-input$openwindowsdoors
        hepa<<-input$portablehepa
        filtertype<<-input$filtertype
        

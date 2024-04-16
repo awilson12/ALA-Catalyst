@@ -2,7 +2,6 @@ require(truncdist)
 require(triangle)
 
 
-
 #processing inputs from tool-----------------------------------------------------
 
 if(size!="Small" & size!="Medium" & size!="Large"){
@@ -72,25 +71,31 @@ if(teachermask=="Yes"){
 
 studentmaskpercent<-as.numeric(studentmaskpercent)/100
 
-if(openwindows=="Yes"){
-  openwindows<-TRUE
-}else{
-  openwindows<-FALSE
+#doubling of ventilation to tripling for open windows/doors
+if(openwindowsdoors=="Yes"){
+  AER.outdoor<-AER.outdoor*(runif(iterations,min=2,max=3)) #https://www.sciencedirect.com/science/article/pii/S2590162122000065
 }
 
-if(opendoor=="Yes"){
-  opendoor<-TRUE
-}else{
-  opendoor<-FALSE
-}
-
+# portable HEPA
 if(hepa=="Yes"){
   hepa<-TRUE
 }else{
   hepa<-FALSE
 }
 
+#filter type
 
+if(filtertype=="HEPA"){
+ filter.effectiveness<-0.9997
+}else if (filtertype=="MERV 13"){
+  filter.effectiveness<-.5
+}else{
+  filter.effectiveness<-.2
+}
+
+AER.indoor<-AER.indoor*(filter.effectiveness)
+
+AER<-AER.indoor+AER.outdoor
 
 #inhalation rates----------------------------------------------------------------
 
