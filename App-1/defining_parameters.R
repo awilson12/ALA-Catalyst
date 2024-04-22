@@ -1,6 +1,7 @@
 require(truncdist)
 require(triangle)
 
+set.seed(34)
 
 #processing inputs from tool-----------------------------------------------------
 
@@ -18,21 +19,23 @@ if(size!="Small" & size!="Medium" & size!="Large"){
 
 if (airexchange!="Poor" & airexchange!="Fair" & airexchange!="Good"){
   
-  AER<-as.numeric(airexchange)
+  AER.outdoor<-as.numeric(airexchange)
   
 }else if (actlevel!="PE"){
   if (airexchange=="Poor"){
-    AER<-0.2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
+    AER.outdoor<-0.2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
   }else if (airexchange=="Fair"){
-    AER<-2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
+    AER.outdoor<-2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
   }else if (airexchange=="Good"){
-    AER<-6 #ASHRAE minimum, chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
+    AER.outdoor<-6 #ASHRAE minimum, chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
   }else{
-    AER<-3 #ASHRAE upper range, on page 24: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
+    AER.outdoor<-3 #ASHRAE upper range, on page 24: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
   }
 }else{
-  AER<-0.3 #placeholder
+  AER.outdoor<-0.3 #placeholder
 }
+
+AER.indoor<-runif(iterations,1,3) #https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8789458/
 
 
 if(studentage=="Kindergarten"){
@@ -76,11 +79,11 @@ if(openwindowsdoors=="Yes"){
   AER.outdoor<-AER.outdoor*(runif(iterations,min=2,max=3)) #https://www.sciencedirect.com/science/article/pii/S2590162122000065
 }
 
-# portable HEPA
+# portable air purifier
 if(hepa=="Yes"){
-  hepa<-TRUE
+  CADR<-runif(iterations,114,823)
 }else{
-  hepa<-FALSE
+  CADR<-0
 }
 
 #filter type
@@ -95,23 +98,23 @@ if(filtertype=="HEPA"){
 
 AER.indoor<-AER.indoor*(filter.effectiveness)
 
-AER<-AER.indoor+AER.outdoor
+AER<-AER.indoor+AER.outdoor+(CADR*60/volume)
 
 #inhalation rates----------------------------------------------------------------
 
-class.duration<-8 # assume 8 hr (daily risk)
+class.duration<-1*60 #in units of minute 
 
 if(activitylevel=="Sedentary or passive activity"){
-    inhalation.student<-rtrunc(iterations,"norm",mean=4.8E-3,sd=8E-4,a=3.2E-3,b=6.4E-3)*timestep
-    inhalation.teacher<-rtrunc(iterations,"norm",mean=4.3E-3,sd=1.15E-3,a=2E-3,b=6.6E-3)*timestep
+    inhalation.student<-rtrunc(iterations,"norm",mean=4.8E-3,sd=8E-4,a=3.2E-3,b=6.4E-3)
+    inhalation.teacher<-rtrunc(iterations,"norm",mean=4.3E-3,sd=1.15E-3,a=2E-3,b=6.6E-3)
       
 }else if (activitylevel=="moderate intensity"){
-    inhalation.student<-rtrunc(iterations,"norm",mean=1.1E-2,sd=2E-3,a=7E-3,b=1.5E-2)*timestep
-    inhalation.teacher<-rtrunc(iterations,"norm",mean=1.2E-2,sd=2E-3,a=8E-3,b=1.6E-2)*timestep
+    inhalation.student<-rtrunc(iterations,"norm",mean=1.1E-2,sd=2E-3,a=7E-3,b=1.5E-2)
+    inhalation.teacher<-rtrunc(iterations,"norm",mean=1.2E-2,sd=2E-3,a=8E-3,b=1.6E-2)
   
 }else{
-    inhalation.student<-rtrunc(iterations,"norm",mean=2.2E-2,sd=3.5E-3,a=1.5E-2,b=2.9E-2)*timestep
-    inhalation.teacher<-rtrunc(iterations,"norm",mean=2.7E-2,sd=5E-3,a=1.7E-2,b=3.7E-2)*timestep
+    inhalation.student<-rtrunc(iterations,"norm",mean=2.2E-2,sd=3.5E-3,a=1.5E-2,b=2.9E-2)
+    inhalation.teacher<-rtrunc(iterations,"norm",mean=2.7E-2,sd=5E-3,a=1.7E-2,b=3.7E-2)
 }
 
 #Parameters related to fomite contacts---------------------------------------------
@@ -239,3 +242,7 @@ if (studentmaskpercent!=0){
     droplet.emissions<-numstudents*fractinfect*(10^rtriangle(iterations,a=0.3,b=1.3,c=0.3)/30)*RNAinfective*timestep 
   }
 }
+
+print(AER.outdoor)
+print(AER.indoor)
+print(AER)
