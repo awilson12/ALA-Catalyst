@@ -96,6 +96,6 @@ source("Dose-response and data sum.R")
     }
   }
   
-  df22<-data.frame(y=signif(risk*1000000,digits=2),type.all,x=person.all)
+  df22<-data.frame(y=signif(risk*100000,digits=2),type.all,x=person.all)
   df22teacher<-df22[type.all=="Total",]
   df22teacher<-subset(df22teacher,select=-c(type.all))
