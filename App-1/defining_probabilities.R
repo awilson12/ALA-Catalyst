@@ -2,13 +2,7 @@
 
 #Row 1 (room air)-------------------------
 #if(openwindowsdoors=="Yes"){
-  if(pathogen=="COVID-19"){
-    lambdas.1<-c(lambda.1.2[i], lambda.1.3, lambda.1.4[i],lambda.1.5[i],0,
-                 0,lambda.1.8,lambda.1.9,lambda.1.10[i])  
-  }else{
-    lambdas.1<-c(lambda.1.2[i], lambda.1.3, lambda.1.4[i],lambda.1.5[i],0,
-                 0,lambda.1.8,lambda.1.9,lambda.1.10)
-  }
+
   
 #}else{
 #  if(pathogen=="COVID-19"){
@@ -21,6 +15,9 @@
   
 #}
 
+
+lambdas.1<-c(lambda.1.2[i], lambda.1.3, lambda.1.4[i],lambda.1.5[i],0,
+             0,lambda.1.8,lambda.1.9,lambda.1.10[i])
 
 
 lambda.1.T<-sum(lambdas.1)

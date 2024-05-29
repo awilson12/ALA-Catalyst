@@ -7,8 +7,9 @@ require(tidyverse)
 require(hrbrthemes)
 require(echarts4r)
 require(devtools)
-require(echarts4r.assets)
+require(flexdashboard)
 require(magrittr)
+require(shinycssloaders)
 
 sidebar<-dashboardSidebar(
   sidebarMenu(
@@ -99,9 +100,10 @@ body <- dashboardBody(
             fluidRow(
                        column(width=12, offset=0, style='padding:0px;', style="background-color:#ffffff;",
                               
-                                title="Infection Risk for a 1-hr Class",status="primary",solidHeader=TRUE,
+                                title="Percent Chance of Infection",status="primary",solidHeader=TRUE,
                                 collabpsible=TRUE,
-                                echarts4rOutput("plot")
+                                box(flexdashboard::gaugeOutput("plot")%>% withSpinner(color="#0dc5c1"),width=200,
+                                  title="Percent Chance of Infection per Student") 
                               
                               )), #end of top left
                 
@@ -109,7 +111,7 @@ body <- dashboardBody(
                 column(3,offset=0, style='padding:0px;',
                     selectInput("pathogen",tags$span(style="color: #009999;","Illness Type"),choices=c("Common Cold","COVID-19","Flu")),
                     sliderInput("fractinfect",tags$span(style="color: #009999;","% of Students Infected"),1,100,0,step=10,ticks=FALSE),
-                    sliderInput("numstudents",tags$span(style="color: #003399;","Number of Students"),min=10,max=40,value=10,step=5,ticks=FALSE),
+                    sliderInput("numstudents",tags$span(style="color: #003399;","Number of Students"),min=10,max=40,value=25,step=5,ticks=FALSE),
                     selectInput("studentage",tags$span(style="color: #003399;","Grade Level"),choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
                     selectInput("actlevel",label=tags$span(style="color: #003399;","Class Type"),choices=c("General Ed","PE","SPED","Music")),
                     conditionalPanel(
@@ -129,6 +131,7 @@ body <- dashboardBody(
            
               ), #end of top right
                    column(width=3,offset=1, style='padding:0px;',
+                          selectInput("handsanitizer","Hand Sanitizer Used by Students",choices=c("Yes","No"),selected="No"),
                          conditionalPanel(
                            condition=("input.actlevelspace!='Outdoors'"),
                            selectInput("airexchange",choices=c("Poor","Fair","Good","Great"),label=tags$span(style="color: #6699FF;","Air Quality Settings")),
@@ -139,29 +142,29 @@ body <- dashboardBody(
                             # If advanced variables are selected, open sample type and dose response.
                              conditionalPanel(
                               condition = ("input.adv%2>0"),
-                              sliderInput(inputId = "airexchange",
-                                          label=tags$span(style="color: #6699FF;","Air Exchange Rate"),
-                                        0.3, 4, 1,ticks=FALSE),
+                              #sliderInput(inputId = "airexchange",
+                               #           label=tags$span(style="color: #6699FF;","Air Exchange Rate"),
+                                #        0.3, 4, 1,ticks=FALSE),
                               selectInput(inputId = "filtertype",label=tags$span(style="color: #6699FF;","Filter Type"),
-                                          choices=c("HEPA","MERV 13","MERV 8")),
-                              selectInput("portablehepa",label=tags$span(style="color: #6699FF;","Portable Air Purifier"),choices=c("Yes","No")),
-                              selectInput("openwindowsdoors",label=tags$span(style="color: #6699FF;","Are windows/doors open?"),choices=c("Yes","No"))),
-                              #selectInput("opendoor",label=tags$span(style="color: #6699FF;","Are doors open?"),choices=c("Yes","No"))),
+                                          choices=c("HEPA","MERV 13","MERV 8"),selected="MERV 8"),
+                              selectInput("portablehepa",label=tags$span(style="color: #6699FF;","Portable Air Purifier"),choices=c("Yes","No"),selected="No"),
+                              selectInput("openwindows",label=tags$span(style="color: #6699FF;","Are windows and/or doors open?"),choices=c("Yes","No"),selected="No"))
+                              #selectInput("opendoor",label=tags$span(style="color: #6699FF;","Are doors open?"),choices=c("Yes","No")),selected="No"),
 
                      ), #end of column
                    column(width=3,offset=1, style='padding:0px;',
 
   
-                            sliderInput("studentmaskpercent",label=tags$span(style="color: #660000;","Percent of Students Masked"),min=0,max=100,value=10,ticks=FALSE),
-                            selectInput("teachermask",label=tags$span(style="color: #660000;","Is the teacher masked?"),choices=c("Yes","No")),
-                            actionButton(inputId = "advmask", label=tags$span(style="color: #660000;","Advanced Teacher Mask Options")),
+                            sliderInput("studentmaskpercent",label=tags$span(style="color: #660000;","Percent of Students Masked"),min=0,max=100,value=0,ticks=FALSE),
+                            #selectInput("teachermask",label=tags$span(style="color: #660000;","Is the teacher masked?"),choices=c("Yes","No")),
+                            #actionButton(inputId = "advmask", label=tags$span(style="color: #660000;","Advanced Teacher Mask Options")),
                           
                           # If advanced variables are selected, open sample type and dose response.
-                          conditionalPanel(
-                            condition = ("input.advmask%2>0"),
-                            selectInput(inputId = "teachermasktype",
-                                        label = "Mask Type",
-                                        choices=c("Cloth","Surgical","KN95")))
+                          #conditionalPanel(
+                          #  condition = ("input.advmask%2>0"),
+                          #  selectInput(inputId = "teachermasktype",
+                           #             label = "Mask Type",
+                          #              choices=c("Cloth","Surgical","KN95")))
                         ) #end of column
             ) #end of second row
             
@@ -180,7 +183,7 @@ shinyApp(
   
    server=function(input,output){
 
-     output$plot<-renderEcharts4r({
+     output$plot<-renderGauge({
        
        rm(list = ls())
        
@@ -189,42 +192,82 @@ shinyApp(
        pathogen<<-input$pathogen 
        numstudents<<-as.numeric(input$numstudents)
        fractinfect<<-as.numeric(input$fractinfect)
-       teachermasktype<<-input$teachermasktype
+       #teachermasktype<<-input$teachermasktype
        airexchange<<-input$airexchange
        actlevel<<-input$actlevel
        studentage<<-input$studentage
-       teachermask<<-input$teachermask
-       openwindowsdoors<<-input$openwindowsdoors
+       #teachermask<<-input$teachermask
+       openwindows<<-input$openwindows
+       handsanitizer<<-input$handsanitizer
+       #opendoor<<-input$opendoor
        hepa<<-input$portablehepa
        filtertype<<-input$filtertype
        
        source('risk_model.R')
-
-       #print(df22)
-       #df22<-data.frame(y=risk*1000,type.all,x=person.all)
-       #print(df22)
-      
        
-       #print(summary(df22teacher$risk))
-       #print(df22teacher)
+       
+       frame.all<-data.frame(risks=c(risk.student.inhale,risk.student.face,risk.student.total),
+                             type=c(rep("Inhalation",length(risk.student.inhale)),rep("Ingestion",length(risk.student.face)),rep("Total",length(risk.student.total))),
+                             person=c(rep("Student",length(c(risk.student.inhale,risk.student.face,risk.student.total)))))
+       
+       
+       type<-c("Inhalation","Ingestion","Total")
+       person<-c("Student")
+       type.all<-rep(NA,6)
+       person.all<-rep(NA,6)
+       risk<-rep(NA,6)
+       
+       for (i in 1:3){
+         for (j in 1:2){
+           if (i==1 & j==1){
+             risk<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
+             type.all<-type[i]
+             person.all<-person[j]
+           }else{
+             risktemp<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
+             typetemp<-type[i]
+             persontemp<-person[j]
+             risk<-c(risk,risktemp)
+             type.all<-c(type.all,typetemp)
+             person.all<-c(person.all,persontemp)
+           }
+           
+         }
+       }
+       
+       
+       df22<-data.frame(y=risk,type.all,x=person.all)
+       View(df22)
+       df22<-df22[df22$type.all=="Total" & df22$x=="Student" & !is.na(df22$type.all),]
+       risk.output<-df22$y[!is.na(df22$y)]
+       
+       
+         gauge(risk.output*100,
+               min = 0, 
+               max = 25, 
+               symbol="%",
+               sectors = gaugeSectors(success = c(0, 0.1), 
+                                      warning = c(0.1, 1),
+                                      danger = c(1, 25)))
+     
        
        #WANT TO MAKE CONDITIONAL TEXT HERE THAT WILL SHOW UP WITH SETTING IS OUTDOORS TO SAY THAT RISKS ARE VERY LOW
        
-         df22teacher |> 
-           e_charts(x) |>
-           e_pictorial(y, symbol = ea_icons("user"), 
-                       symbolRepeat = TRUE,
-                       symbolSize = c(15, 15)) %>% 
-           e_theme("westeros") %>%
-           e_title("Daily Risk: Infections/100,000 People") %>% 
-           e_flip_coords() %>%
+         #df22teacher |> 
+        #   e_charts(x) |>
+        #   e_pictorial(y, symbol = ea_icons("user"), 
+        #               symbolRepeat = TRUE,
+        #               symbolSize = c(15, 15)) %>% 
+        #   e_theme("westeros") %>%
+        #   e_title("Daily Risk: Infections/1,000 People") %>% 
+        #   e_flip_coords() %>%
            # Hide Legend
-           e_legend(show = FALSE) %>%
+       #    e_legend(show = FALSE) %>%
            # Remove Gridlines
-           e_x_axis(splitLine=list(show = TRUE)) %>%
-           e_y_axis(splitLine=list(show = TRUE)) %>%
+        #   e_x_axis(splitLine=list(show = TRUE)) %>%
+        #   e_y_axis(splitLine=list(show = TRUE)) %>%
            # Format Label
-           e_labels(fontSize = 16, fontWeight ='bold', position = "right",offset=c(10,0)) 
+        #   e_labels(fontSize = 16, fontWeight ='bold', position = "right",offset=c(10,0)) 
 
      })
    }

@@ -1,7 +1,7 @@
 require(truncdist)
 require(triangle)
 
-set.seed(34)
+
 
 #processing inputs from tool-----------------------------------------------------
 
@@ -17,25 +17,20 @@ if(size!="Small" & size!="Medium" & size!="Large"){
   }
 }
 
-if (airexchange!="Poor" & airexchange!="Fair" & airexchange!="Good"){
-  
-  AER.outdoor<-as.numeric(airexchange)
-  
-}else if (actlevel!="PE"){
+
+if (actlevel!="PE"){
   if (airexchange=="Poor"){
-    AER.outdoor<-0.2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
-  }else if (airexchange=="Fair"){
     AER.outdoor<-2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
+  }else if (airexchange=="Fair"){
+    AER.outdoor<-4 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
   }else if (airexchange=="Good"){
-    AER.outdoor<-6 #ASHRAE minimum, chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
+    AER.outdoor<-5 #ASHRAE minimum, chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
   }else{
-    AER.outdoor<-3 #ASHRAE upper range, on page 24: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
+    AER.outdoor<-6 #ASHRAE upper range, on page 24: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
   }
 }else{
-  AER.outdoor<-0.3 #placeholder
+  AER.outdoor<-0.3 #placeholder 
 }
-
-AER.indoor<-runif(iterations,1,3) #https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8789458/
 
 
 if(studentage=="Kindergarten"){
@@ -65,56 +60,51 @@ if(actlevel=="General Ed" | actlevel=="SPED"){
 }
 
 
-if(teachermask=="Yes"){
-  teacher.mask<-TRUE
-}else{
-  teacher.mask<-FALSE
-}
 
 
 studentmaskpercent<-as.numeric(studentmaskpercent)/100
 
-#doubling of ventilation to tripling for open windows/doors
-if(openwindowsdoors=="Yes"){
-  AER.outdoor<-AER.outdoor*(runif(iterations,min=2,max=3)) #https://www.sciencedirect.com/science/article/pii/S2590162122000065
-}
-
-# portable air purifier
-if(hepa=="Yes"){
-  CADR<-runif(iterations,114,823)
+if(openwindows=="Yes"){
+  W<-runif(iterations,2,3)
 }else{
-  CADR<-0
+  W<-1
 }
 
-#filter type
+if(hepa=="Yes"){
+  AER.portable<-(runif(iterations,114,823)*60)/volume
+}else{
+  AER.portable<-0
+}
+
+AER.indoor<-runif(iterations,1,3)
 
 if(filtertype=="HEPA"){
- filter.effectiveness<-0.9997
+  Filter<-0.9997
 }else if (filtertype=="MERV 13"){
-  filter.effectiveness<-.5
+  Filter<-0.5
 }else{
-  filter.effectiveness<-.2
+  Filter<-0.2
 }
 
-AER.indoor<-AER.indoor*(filter.effectiveness)
 
-AER<-AER.indoor+AER.outdoor+(CADR*60/volume)
+AER<-(AER.outdoor*W)+(AER.indoor*Filter)+AER.portable
+
 
 #inhalation rates----------------------------------------------------------------
 
-class.duration<-1*60 #in units of minute 
+class.duration<-8 # assume 8 hr (daily risk)
 
 if(activitylevel=="Sedentary or passive activity"){
-    inhalation.student<-rtrunc(iterations,"norm",mean=4.8E-3,sd=8E-4,a=3.2E-3,b=6.4E-3)
-    inhalation.teacher<-rtrunc(iterations,"norm",mean=4.3E-3,sd=1.15E-3,a=2E-3,b=6.6E-3)
+    inhalation.student<-rtrunc(iterations,"norm",mean=4.8E-3,sd=8E-4,a=3.2E-3,b=6.4E-3)*timestep
+    inhalation.teacher<-rtrunc(iterations,"norm",mean=4.3E-3,sd=1.15E-3,a=2E-3,b=6.6E-3)*timestep
       
 }else if (activitylevel=="moderate intensity"){
-    inhalation.student<-rtrunc(iterations,"norm",mean=1.1E-2,sd=2E-3,a=7E-3,b=1.5E-2)
-    inhalation.teacher<-rtrunc(iterations,"norm",mean=1.2E-2,sd=2E-3,a=8E-3,b=1.6E-2)
+    inhalation.student<-rtrunc(iterations,"norm",mean=1.1E-2,sd=2E-3,a=7E-3,b=1.5E-2)*timestep
+    inhalation.teacher<-rtrunc(iterations,"norm",mean=1.2E-2,sd=2E-3,a=8E-3,b=1.6E-2)*timestep
   
 }else{
-    inhalation.student<-rtrunc(iterations,"norm",mean=2.2E-2,sd=3.5E-3,a=1.5E-2,b=2.9E-2)
-    inhalation.teacher<-rtrunc(iterations,"norm",mean=2.7E-2,sd=5E-3,a=1.7E-2,b=3.7E-2)
+    inhalation.student<-rtrunc(iterations,"norm",mean=2.2E-2,sd=3.5E-3,a=1.5E-2,b=2.9E-2)*timestep
+    inhalation.teacher<-rtrunc(iterations,"norm",mean=2.7E-2,sd=5E-3,a=1.7E-2,b=3.7E-2)*timestep
 }
 
 #Parameters related to fomite contacts---------------------------------------------
@@ -149,7 +139,7 @@ if(student.age<6){
   total.body.SA<-rtriangle(iterations,a=0.792,b=1.11,c=0.917)
   
 }else if (student.age>=8 & student.age<9){
-  total.body.SA<-rtriangle(iterations,a=0.863,b=1.24,c=0.779)
+  total.body.SA<-rtriangle(iterations,c=0.863,b=1.24,a=0.779)
   
 }else if (student.age>=9 & student.age<10){
   total.body.SA<-rtriangle(iterations,a=0.897,b=1.29,c=1.06)
@@ -166,10 +156,10 @@ A.teacher.hand<-runif(iterations,445,535)
 #-----frequency of hand-to-face contacts
 H.teacher<-rtrunc(iterations,"norm",mean=14,sd=5.4,a=0,b=30)
 
-if(teacher.mask==TRUE){
-  H.teacher<-H.teacher*rtriangle(iterations,a=0.10,b=1.39,c=0.27)
+#if(teacher.mask==TRUE){
+#  H.teacher<-H.teacher*rtriangle(iterations,a=0.10,b=1.39,c=0.27)
   
-}
+#}
 
 H.student<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)
 
@@ -179,33 +169,41 @@ if (studentmaskpercent!=0){
 
 #----------mask filtration efficiencies
 mask.student<-runif(iterations,0.70,0.995)
-mask.teacher<-runif(iterations,0.63,0.78)
+#mask.teacher<-runif(iterations,0.63,0.78)
 
-if(teachermasktype=="Surgical"){
+#if(teachermasktype=="Surgical"){
   
-  mask.teacher<-runif(iterations,0.63,0.82)
+#  mask.teacher<-runif(iterations,0.63,0.82)
   
-}else if (teachermasktype=="KN95"){
+#}else if (teachermasktype=="KN95"){
   
-  mask.teacher<-runif(iterations,0.57,0.78)
+#  mask.teacher<-runif(iterations,0.57,0.78)
   
-}
+#}
 
 #------settling rate
 settle<-rtriangle(a=21.60,b=36,c=28.80)/(24*60)*timestep
 
+#------hand sanitizer
+if(handsanitizer=="Yes"){
+  R<-(-log(0.999/1))/(class.duration*60*timestep)*5 #0.999 reduction per event and assuming 5 hand sanitizer events in a whole day - amount of reduction assumed over a whole day,
+  #and assuming first order decay
+}else{
+  R<-1
+}
+
 #inactivation rates--------
 
 if(pathogen=="Common Cold"){
-  inactiv.hands<-runif(iterations,3.45,9.2)*(1/60)*timestep #convert to minutes and then per timestep
-  inactiv.air<-3*(1/60)*timestep #convert to minutes and then per timestep
-  inactiv.surf<-0.92*(1/60)*timestep #convert to minutes and then per timestep
+  inactiv.hands<-(runif(iterations,3.45,9.2)*(1/60)*timestep)+R #convert to minutes and then per timestep
+  inactiv.air<-rep(3*(1/60)*timestep,iterations) #convert to minutes and then per timestep
+  inactiv.surf<-rep(0.92*(1/60)*timestep,iterations) #convert to minutes and then per timestep
 }else if (pathogen=="Flu"){
-  inactiv.hands<-rtriangle(iterations,a=0.83,b=0.98,c=0.90)*(1/60)*timestep #convert to minutes and then per timestep
-  inactiv.air<-1.22*(1/24)*(1/60)*timestep #convert to minutes
-  inactiv.surf<-0.13*(1/60)*timestep #convert to minutes
+  inactiv.hands<-(rtriangle(iterations,a=0.83,b=0.98,c=0.90)*(1/60)*timestep)+R #convert to minutes and then per timestep
+  inactiv.air<-rep(1.22*(1/24)*(1/60)*timestep,iterations) #convert to minutes
+  inactiv.surf<-rep(0.13*(1/60)*timestep,iterations) #convert to minutes
 }else{
-  inactiv.hands<-rtriangle(iterations,a=0.15,b=0.18,c=0.17)*(1/60)*timestep #convert to minutes and then per timestep
+  inactiv.hands<-(rtriangle(iterations,a=0.15,b=0.18,c=0.17)*(1/60)*timestep)+R #convert to minutes and then per timestep
   inactiv.air<-rtrunc(iterations,"norm",mean=0.006,sd=0.006,a=0,b=10)*timestep
   inactiv.surf<-rtriangle(iterations,a=0.08,b=0.12,c=0.10)*timestep
 }
@@ -242,7 +240,3 @@ if (studentmaskpercent!=0){
     droplet.emissions<-numstudents*fractinfect*(10^rtriangle(iterations,a=0.3,b=1.3,c=0.3)/30)*RNAinfective*timestep 
   }
 }
-
-print(AER.outdoor)
-print(AER.indoor)
-print(AER)

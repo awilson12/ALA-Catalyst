@@ -1,12 +1,10 @@
 
-setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
+#setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
 
-#setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
+setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
   
   timestep<-0.1 #fraction of a minute
-  iterations<-1000
-  
-  set.seed(34)
+  iterations<-500
   
   #-----------------DEFINING PARAMETERS
   source('defining_parameters.R')
@@ -25,7 +23,7 @@ setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
     source('defining_probabilities.R')
     
     #defining dimensions for exposure frame
-    times=length(1:(class.duration*1/timestep))
+    times=length(1:(class.duration*60*1/timestep))
     statesnum=10
     
     #generating new frame to save # of viruses over time across all states
@@ -33,69 +31,32 @@ setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
     sim.mat[,1]<-0
 
     
-    for(k in 2:(class.duration*(1/timestep))){
+    for(k in 2:(class.duration*60*(1/timestep))){
       
        sim.mat[,k]<-sim.mat[,k-1]%*%Ptemp
        sim.mat[1,k]<-sim.mat[1,k]+air.emissions[i]
-       if(!is.na(droplet.emissions[i])){
-         sim.mat[3,k]<-sim.mat[3,k]+droplet.emissions[i]
-       }else{
-         sim.mat[3,k]<-sim.mat[3,k]
-       }
+       #if(!is.na(droplet.emissions[i])){
+      #    sim.mat[3,k]<-sim.mat[3,k]+droplet.emissions[i]
+      # }else{
+      #    sim.mat[3,k]<-sim.mat[3,k]
+      # }
        
 
     }       #end of exposure model
     
     exposure.frames[[i]]<-sim.mat
     
-    avg.dose.student.inhale[i]<-sim.mat[4,length(2:(class.duration*(1/timestep)))]/(numstudents)
-    dose.teacher.inhale[i]<-sim.mat[5,length(2:(class.duration*(1/timestep)))]
-    avg.dose.student.face[i]<-sim.mat[6,length(2:(class.duration*(1/timestep)))]/(numstudents)
-    dose.teacher.face[i]<-sim.mat[7,length(2:(class.duration*(1/timestep)))]
+    avg.dose.student.inhale[i]<-sim.mat[4,length(2:(class.duration*60*(1/timestep)))]/(numstudents)
+    #dose.teacher.inhale[i]<-sim.mat[5,length(2:(class.duration*60*(1/timestep)))]
+    avg.dose.student.face[i]<-sim.mat[6,length(2:(class.duration*60*(1/timestep)))]/(numstudents)
+    #dose.teacher.face[i]<-sim.mat[7,length(2:(class.duration*60*(1/timestep)))]
     
   } #end of iterations through exposure frames
   
   exposure.frame.final<-exposure.frames
-  frame.dose<-data.frame(avg.dose.student.inhale,avg.dose.student.face,total.student=avg.dose.student.inhale+avg.dose.student.face,
-                         dose.teacher.inhale,dose.teacher.face,total.teacher=dose.teacher.inhale+dose.teacher.face)
+  frame.dose<-data.frame(avg.dose.student.inhale,avg.dose.student.face,total.student=avg.dose.student.inhale+avg.dose.student.face)
 
 
 
 
 source("Dose-response and data sum.R")
-  
-  
-  frame.all<-data.frame(risks=c(risk.student.inhale,risk.student.face,risk.student.total,
-                                risk.teacher.inhale,risk.teacher.face,risk.teacher.total),
-                        type=rep(c(rep("Inhalation",length(risk.student.inhale)),rep("Ingestion",length(risk.student.face)),rep("Total",length(risk.student.total))),2),
-                        person=c(rep("Student",length(c(risk.student.inhale,risk.student.face,risk.student.total))),
-                                 rep("Teacher",length(c(risk.teacher.inhale,risk.teacher.face,risk.teacher.total)))))
-  
-  
-  type<-c("Inhalation","Ingestion","Total")
-  person<-c("Student","Teacher")
-  type.all<-rep(NA,6)
-  person.all<-rep(NA,6)
-  risk<-rep(NA,6)
-  
-  for (i in 1:3){
-    for (j in 1:2){
-      if (i==1 & j==1){
-        risk<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
-        type.all<-type[i]
-        person.all<-person[j]
-      }else{
-        risktemp<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
-        typetemp<-type[i]
-        persontemp<-person[j]
-        risk<-c(risk,risktemp)
-        type.all<-c(type.all,typetemp)
-        person.all<-c(person.all,persontemp)
-      }
-      
-    }
-  }
-  
-  df22<-data.frame(y=signif(risk*100000,digits=2),type.all,x=person.all)
-  df22teacher<-df22[type.all=="Total",]
-  df22teacher<-subset(df22teacher,select=-c(type.all))
