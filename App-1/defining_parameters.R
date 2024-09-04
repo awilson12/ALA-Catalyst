@@ -17,20 +17,22 @@ if(size!="Small" & size!="Medium" & size!="Large"){
   }
 }
 
-
-if (actlevel!="PE"){
-  if (airexchange=="Poor"){
-    AER.outdoor<-2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
-  }else if (airexchange=="Fair"){
-    AER.outdoor<-4 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
-  }else if (airexchange=="Good"){
-    AER.outdoor<-5 #ASHRAE minimum, chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
-  }else{
-    AER.outdoor<-6 #ASHRAE upper range, on page 24: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
-  }
-}else{
-  AER.outdoor<-0.3 #placeholder 
+if (actlevel=="PE"){
+  volume<-numstudents*45*9*(0.3048)^3
 }
+
+
+
+if (airexchange=="Poor"){
+  AER.outdoor<-2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
+}else if (airexchange=="Fair"){
+  AER.outdoor<-4 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
+}else if (airexchange=="Good"){
+  AER.outdoor<-5 #ASHRAE minimum, chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
+}else{
+  AER.outdoor<-6 #ASHRAE upper range, on page 24: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
+}
+
 
 
 if(studentage=="Kindergarten"){
@@ -96,28 +98,28 @@ AER<-(AER.outdoor*W)+(AER.indoor*Filter)+AER.portable
 class.duration<-8 # assume 8 hr (daily risk)
 
 if(activitylevel=="Sedentary or passive activity"){
-    inhalation.student<-rtrunc(iterations,"norm",mean=4.8E-3,sd=8E-4,a=3.2E-3,b=6.4E-3)*timestep
-    inhalation.teacher<-rtrunc(iterations,"norm",mean=4.3E-3,sd=1.15E-3,a=2E-3,b=6.6E-3)*timestep
-      
+  inhalation.student<-rtrunc(iterations,"norm",mean=4.8E-3,sd=8E-4,a=3.2E-3,b=6.4E-3)*timestep
+  inhalation.teacher<-rtrunc(iterations,"norm",mean=4.3E-3,sd=1.15E-3,a=2E-3,b=6.6E-3)*timestep
+  
 }else if (activitylevel=="moderate intensity"){
-    inhalation.student<-rtrunc(iterations,"norm",mean=1.1E-2,sd=2E-3,a=7E-3,b=1.5E-2)*timestep
-    inhalation.teacher<-rtrunc(iterations,"norm",mean=1.2E-2,sd=2E-3,a=8E-3,b=1.6E-2)*timestep
+  inhalation.student<-rtrunc(iterations,"norm",mean=1.1E-2,sd=2E-3,a=7E-3,b=1.5E-2)*timestep
+  inhalation.teacher<-rtrunc(iterations,"norm",mean=1.2E-2,sd=2E-3,a=8E-3,b=1.6E-2)*timestep
   
 }else{
-    inhalation.student<-rtrunc(iterations,"norm",mean=2.2E-2,sd=3.5E-3,a=1.5E-2,b=2.9E-2)*timestep
-    inhalation.teacher<-rtrunc(iterations,"norm",mean=2.7E-2,sd=5E-3,a=1.7E-2,b=3.7E-2)*timestep
+  inhalation.student<-rtrunc(iterations,"norm",mean=2.2E-2,sd=3.5E-3,a=1.5E-2,b=2.9E-2)*timestep
+  inhalation.teacher<-rtrunc(iterations,"norm",mean=2.7E-2,sd=5E-3,a=1.7E-2,b=3.7E-2)*timestep
 }
 
 #Parameters related to fomite contacts---------------------------------------------
 
 if (pathogen!="Common Cold"){
-    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.13,sd=0.14) 
-    TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.05,sd=0.07)
+  TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.13,sd=0.14) 
+  TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.05,sd=0.07)
 }else{
-    TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.22,sd=0.17) 
-    TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.30,sd=0.18)  
+  TE.HS<-rtrunc(iterations,"norm",a=0,b=1,mean=0.22,sd=0.17) 
+  TE.SH<-rtrunc(iterations,"norm",a=0,b=1,mean=0.30,sd=0.18)  
 }
-  
+
 TE.HF<-rtrunc(iterations,"norm",a=0,b=1,mean=0.3390,sd=0.1318)
 
 #Adjusted for fraction of total hand surface area--------------------
@@ -159,13 +161,13 @@ mask.student<-runif(iterations,0.70,0.995)
 #mask.teacher<-runif(iterations,0.63,0.78)
 
 #if(teachermasktype=="Surgical"){
-  
+
 #  mask.teacher<-runif(iterations,0.63,0.82)
-  
+
 #}else if (teachermasktype=="KN95"){
-  
+
 #  mask.teacher<-runif(iterations,0.57,0.78)
-  
+
 #}
 
 #------settling rate

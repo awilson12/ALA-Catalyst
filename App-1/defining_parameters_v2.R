@@ -17,8 +17,12 @@ if(size!="Small" & size!="Medium" & size!="Large"){
   }
 }
 
+if (actlevel=="PE"){
+  volume<-numstudents*45*9*(0.3048)^3
+}
 
-if (actlevel!="PE"){
+
+
   if (airexchange=="Poor"){
     AER.outdoor<-2 #https://onlinelibrary.wiley.com/doi/10.1111/ina.12384
   }else if (airexchange=="Fair"){
@@ -28,9 +32,7 @@ if (actlevel!="PE"){
   }else{
     AER.outdoor<-6 #ASHRAE upper range, on page 24: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf
   }
-}else{
-  AER.outdoor<-0.3 #placeholder 
-}
+
 
 
 if(studentage=="Kindergarten"){
