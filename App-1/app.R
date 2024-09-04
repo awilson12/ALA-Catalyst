@@ -115,10 +115,6 @@ body <- dashboardBody(
                     selectInput("studentage",tags$span(style="color: #003399;","Grade Level"),choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
                     selectInput("actlevel",label=tags$span(style="color: #003399;","Class Type"),choices=c("General Ed","PE","SPED","Music")),
                     conditionalPanel(
-                      condition=("input.actlevel=='PE'"),
-                      selectInput("actlevelspace",label=tags$span(style="color: #003399;","PE Environment"),choices=c("Gym","Outdoors"))
-                    ),
-                    conditionalPanel(
                       condition=("input.actlevel!='PE'"),
                       selectInput("size",tags$span(style="color: #003399;","Classroom Size"),choices=c("Small","Medium","Large")),
                       actionButton(inputId="advclass",label=tags$span(style="color: #003399;","Advanced Classroom Size Options")),
