@@ -22,7 +22,7 @@ if (pathogen=="Common Cold"){
     
 }else if (pathogen=="COVID-19"){
   #placeholder from Watanabe and Pitol & Julian
-    k<-2.46E-3
+    k<-0.054
     
     risk.student.inhale<-1-exp(-frame.dose$avg.dose.student.inhale*k)
     risk.student.face<-1-exp(-frame.dose$avg.dose.student.face*k)
@@ -33,9 +33,9 @@ if (pathogen=="Common Cold"){
     #risk.teacher.total<-1-exp(-frame.dose$total.teacher*k)
       
 }else{
-  #from QMRA wiki for now: https://qmrawiki.org/pathogens/influenza
-    alpha.adults<-exp(-1.22)
-    N50.adults<-exp(13.0)
+  #from Watanabe et al. H1N1 numbers for kids
+    alpha.children<-exp(-1.24)
+    N50.children<-exp(5.6)
     
     risk.student.inhale<-1-(1+(frame.dose$avg.dose.student.inhale*(2^(1/alpha.children)-1)/N50.children))^-alpha.children
     risk.student.face<-1-(1+(frame.dose$avg.dose.student.face*(2^(1/alpha.children)-1)/N50.children))^-alpha.children
@@ -60,10 +60,6 @@ if (pathogen=="Common Cold"){
 
 # P(illness|infection) - age dependent? Can see what data I can find...
 
-# Rhinovirus
-
-P.illness.infection.child<-(38/(14+38)) #from Table II in van der Zalm et al. (2009) (for non asthamtic children, ages 0-7)
-P.illness.student<-P.illness.infection.child*risk.student.total
 
 
 #will look for data on this topic.. increased risk of infection and/or illness for asthamtic children?

@@ -25,6 +25,7 @@ openwindows<-"Yes"
 opendoor<-"No"
 hepa<-"Yes"
 filtertype<-"MERV 13"
+handsanitizer<-"No"
 
 source("C:/Users/wilso/Documents/ALA-Catalyst/App-1/risk_model.R")
 
@@ -84,15 +85,17 @@ df22<-df22[df22$type.all=="Total" & df22$x=="Student" & !is.na(df22$type.all),]
 #df22teacher<-subset(df22teacher,select=-c(type.all))
 risk.output<-df22$y[!is.na(df22$y)]
 
-#checking iterations and time step (500 iterations, 0.1 min timestep)
+#checking iterations and time step (500 iterations, 0.1 min timestep / 1,000 iterations, 0.1 min timestep
+#500 reasonable for computational issues for the app, but 1,000 appears superior in terms of consistency in
+#precision
 #run 1 risk output = 	
-0.007029778
+0.007029778 / 0.006115967
 #run 2 risk output = 
-0.006277753
+0.006277753 / 0.006189188
 #run 3 risk output = 
-0.006304982
+0.006304982 / 0.006154562
 #run 4 risk output = 
-0.005627256
+0.005627256 / 0.006112971
 #run 5 risk output = 
-0.006340685
+0.006340685 / 0.006601055
 #same order of magnitude, and rougly +/- 0.001. Happy with this outcome.

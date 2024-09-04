@@ -4,7 +4,7 @@
 setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
   
   timestep<-0.1 #fraction of a minute
-  iterations<-500
+  iterations<-1000
   
   #-----------------DEFINING PARAMETERS
   source('defining_parameters.R')

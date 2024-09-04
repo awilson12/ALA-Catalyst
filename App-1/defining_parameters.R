@@ -6,14 +6,14 @@ require(triangle)
 #processing inputs from tool-----------------------------------------------------
 
 if(size!="Small" & size!="Medium" & size!="Large"){
-  volume<-(size*10)*(0.3048)^3 #assuming height of 10 ft and then convert cubic ft to cubic m
+  volume<-(size*9)*(0.3048)^3 #assuming height of 9 ft and then convert cubic ft to cubic m
 }else{
   if(size=="Small"){
-    volume<-numstudents*28*10*(0.3048)^3 #assuming 28 ft^2/student and then 10 ft height and convert to m^3
+    volume<-numstudents*28*9*(0.3048)^3 #assuming 28 ft^2/student and then 9 ft height and convert to m^3
   }else if (size=="Medium"){
-    volume<-numstudents*32*10*(0.3048)^3
+    volume<-numstudents*32*9*(0.3048)^3
   }else{
-    volume<-numstudnts*45*10*(0.3048)^3
+    volume<-numstudents*45*9*(0.3048)^3
   }
 }
 
@@ -71,7 +71,7 @@ if(openwindows=="Yes"){
 }
 
 if(hepa=="Yes"){
-  AER.portable<-(runif(iterations,114,823)*60)/volume
+  AER.portable<-(runif(iterations,114,823)*0.028*60)/volume
 }else{
   AER.portable<-0
 }
@@ -80,12 +80,13 @@ AER.indoor<-runif(iterations,1,3)
 
 if(filtertype=="HEPA"){
   Filter<-0.9997
+}else if (filtertype=="MERV 14"){
+  Filter<-0.75
 }else if (filtertype=="MERV 13"){
   Filter<-0.5
 }else{
-  Filter<-0.2
+  Filter<-0.2 
 }
-
 
 AER<-(AER.outdoor*W)+(AER.indoor*Filter)+AER.portable
 
@@ -123,48 +124,34 @@ TE.HF<-rtrunc(iterations,"norm",a=0,b=1,mean=0.3390,sd=0.1318)
 S.H.student<-runif(iterations,0.008,0.25)/2
 S.H.teacher<-runif(iterations,0.008,0.31)/2
 
-S.F.student<-runif(iterations,0.008,0.010)/2 #assumed for now
-S.F.teacher<-runif(iterations,0.008,0.010)/2 #assumed for now
+S.F.student<-runif(iterations,0.008,0.010)/2 
+S.F.teacher<-runif(iterations,0.008,0.010)/2 
 
 A.surface<-runif(iterations,57240,111630)
-percent.total.body<-runif(iterations,0.047,0.057)
+percent.total.body<-runif(iterations,0.047,0.066)
 
 if(student.age<6){
-  total.body.SA<-rtriangle(iterations,a=0.675, b=0.918,c=0.779)
-  
-}else if (student.age>=6 & student.age<7){
-  total.body.SA<-rtriangle(iterations,a=0.723,b=1.06,c=0.843)
-  
-}else if (student.age>=7 & student.age<8){
-  total.body.SA<-rtriangle(iterations,a=0.792,b=1.11,c=0.917)
-  
-}else if (student.age>=8 & student.age<9){
-  total.body.SA<-rtriangle(iterations,c=0.863,b=1.24,a=0.779)
-  
-}else if (student.age>=9 & student.age<10){
-  total.body.SA<-rtriangle(iterations,a=0.897,b=1.29,c=1.06)
-  
+  total.body.SA<-rtriangle(iterations,a=0.61, b=0.95,c=0.76)*100*100
+  #converting to cm^2
 }else{
-  total.body.SA<-rtriangle(iterations,a=0.981,b=1.48,c=1.17)
-  
-}
+  total.body.SA<-rtriangle(iterations,a=0.81,b=1.48,c=1.08)*100*100
+  #converting to cm^2
+} 
 
-A.student.hand<-percent.total.body*total.body.SA
+A.student.hand<-percent.total.body*total.body.SA/2 #single hand SA
 
-A.teacher.hand<-runif(iterations,445,535)
+A.teacher.hand<-runif(iterations,445,535) #single hand SA
 
 #-----frequency of hand-to-face contacts
-H.teacher<-rtrunc(iterations,"norm",mean=14,sd=5.4,a=0,b=30)
-
-#if(teacher.mask==TRUE){
-#  H.teacher<-H.teacher*rtriangle(iterations,a=0.10,b=1.39,c=0.27)
-  
-#}
+H.teacher.face<-rtrunc(iterations,"norm",mean=14,sd=5.4,a=0,b=30)
+H.teacher<-rlnorm(iterations,meanlog=log(4.1),sdlog=log(1.6))
 
 H.student<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)
+H.student.face<-rtrunc(iterations,"norm",mean=18.9,sd=5.6)
 
 if (studentmaskpercent!=0){
-  H.student<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)*0.3 # assuming for now reduced by 30%
+  factor.reduce<-rtriangle(iterations,a=0.07,b=0.21,c=0.12)
+  H.student.face<-(H.student.face*factor.reduce*studentmaskpercent)
 }
 
 #----------mask filtration efficiencies
@@ -185,8 +172,14 @@ mask.student<-runif(iterations,0.70,0.995)
 settle<-rtriangle(a=21.60,b=36,c=28.80)/(24*60)*timestep
 
 #------hand sanitizer
+
+if (pathogen=="Common Cold"){
+  reduce.hands<-1-1/(10^1.5)
+}else{
+  reduce.hands<-1-1/(10^3)
+}
 if(handsanitizer=="Yes"){
-  R<-(-log(0.999/1))/(class.duration*60*timestep)*5 #0.999 reduction per event and assuming 5 hand sanitizer events in a whole day - amount of reduction assumed over a whole day,
+  R<-(-log(reduce.hands/1))/(class.duration*60*timestep)*5 #0.999 reduction per event and assuming 5 hand sanitizer events in a whole day - amount of reduction assumed over a whole day,
   #and assuming first order decay
 }else{
   R<-1
@@ -210,15 +203,20 @@ if(pathogen=="Common Cold"){
 
 #emissions-------------------
 RNAinfective<-runif(iterations,1/1000,1/100)
-
 if (studentmaskpercent!=0){
   
   if(pathogen=="Flu"){
-    air.emissions<-numstudents*fractinfect*(1-mask.student)*(10^rtriangle(iterations,a=0.3,b=3,c=0.3)/30)*RNAinfective*timestep 
+    air.emissions<-(numstudents*fractinfect)*
+      ((studentmaskpercent)*(1-mask.student) + (1-(studentmaskpercent)))*
+      (10^rtriangle(iterations,a=0.3,b=3,c=0.3)/30)*RNAinfective*timestep 
   }else if (pathogen=="COVID-19"){
-    air.emissions<-numstudents*fractinfect*(1-mask.student)*(10^rtriangle(iterations,a=0.3,b=3.3,c=0.3)/30)*RNAinfective*timestep 
+    air.emissions<-(numstudents*fractinfect)*
+      ((studentmaskpercent)*(1-mask.student) + (1-(studentmaskpercent)))*
+      (10^rtriangle(iterations,a=0.3,b=3.3,c=0.3)/30)*RNAinfective*timestep 
   }else{
-    air.emissions<-numstudents*fractinfect*(1-mask.student)*(10^rtriangle(iterations,a=0.3,b=2.8,c=1.8)/30)*RNAinfective*timestep 
+    air.emissions<-(numstudents*fractinfect)*
+      ((studentmaskpercent)*(1-mask.student) + (1-(studentmaskpercent)))*
+      (10^rtriangle(iterations,a=0.3,b=2.8,c=1.8)/30)*RNAinfective*timestep 
   }
   
   droplet.emissions<-rep(0,iterations)
@@ -229,12 +227,12 @@ if (studentmaskpercent!=0){
     
     air.emissions<-numstudents*fractinfect*(10^rtriangle(iterations,a=0.3,b=3,c=0.3)/30)*RNAinfective*timestep 
     droplet.emissions<-numstudents*fractinfect*(10^rtriangle(iterations,a=0.3,b=1.1,c=0.3)/30)*RNAinfective*timestep 
- 
+    
   }else if (pathogen=="COVID-19"){
     
     air.emissions<-numstudents*fractinfect*(10^rtriangle(iterations,a=0.3,b=3.3,c=0.3)/30)*RNAinfective*timestep 
     droplet.emissions<-numstudents*fractinfect*(10^rtriangle(iterations,a=0.3,b=1.2,c=0.3)/30)*RNAinfective*timestep 
- 
+    
   }else{
     air.emissions<-numstudents*fractinfect*(10^rtriangle(iterations,a=0.3,b=2.8,c=1.8)/30)*RNAinfective*timestep 
     droplet.emissions<-numstudents*fractinfect*(10^rtriangle(iterations,a=0.3,b=1.3,c=0.3)/30)*RNAinfective*timestep 

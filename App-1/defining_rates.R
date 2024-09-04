@@ -26,11 +26,13 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
     
 #1---->4, room air to student respiratory tract
   if(studentmaskpercent!=0){
-    lambda.1.4<-(1/volume)*(inhalation.student*numstudents)*(1-mask.student)
+    lambda.1.4<-(1/volume)*(inhalation.student*numstudents)*
+      ((1-(studentmaskpercent))+((studentmaskpercent)*(1-mask.student)))
+    #print('true')
   }else{
     lambda.1.4<-(1/volume)*(inhalation.student*numstudents)
   }
-
+#mean(lambda.1.4)
 #1---->5, room air to teacher respiratory tract
   #if(teacher.mask==TRUE){
   #  lambda.1.5<-(1/volume)*(1-mask.teacher)*inhalation.teacher
@@ -39,10 +41,10 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
   #}
 
 #8---->6, hands to student mucosal membrane
-    lambda.8.6<-S.F.student*TE.HF*numstudents*H.student
+    lambda.8.6<-S.F.student*TE.HF*numstudents*H.student.face
 
 #9---->7, hands to teacher mucosal membrane
-    lambda.9.7<-S.F.teacher*TE.HF*H.teacher*timestep
+    lambda.9.7<-S.F.teacher*TE.HF*H.teacher.face*timestep
 
 #1---->8,9 assume no settling on hands
 lambda.1.8<-0

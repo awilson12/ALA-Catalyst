@@ -111,7 +111,7 @@ body <- dashboardBody(
                 column(3,offset=0, style='padding:0px;',
                     selectInput("pathogen",tags$span(style="color: #009999;","Illness Type"),choices=c("Common Cold","COVID-19","Flu")),
                     sliderInput("fractinfect",tags$span(style="color: #009999;","% of Students Infected"),1,100,0,step=10,ticks=FALSE),
-                    sliderInput("numstudents",tags$span(style="color: #003399;","Number of Students"),min=10,max=40,value=25,step=5,ticks=FALSE),
+                    sliderInput("numstudents",tags$span(style="color: #003399;","Number of Students"),min=1,max=40,value=20,step=5,ticks=FALSE),
                     selectInput("studentage",tags$span(style="color: #003399;","Grade Level"),choices=c("Kindergarten","1st","2nd","3rd","4th","5th")),
                     selectInput("actlevel",label=tags$span(style="color: #003399;","Class Type"),choices=c("General Ed","PE","SPED","Music")),
                     conditionalPanel(
@@ -124,7 +124,7 @@ body <- dashboardBody(
                       actionButton(inputId="advclass",label=tags$span(style="color: #003399;","Advanced Classroom Size Options")),
                       conditionalPanel(
                         condition=("input.advclass%2>0"),
-                        sliderInput(inputId="size",label=tags$span(style="color: #003399;","Classroom Sq. Ft."),500,1000,100,ticks=FALSE)
+                        sliderInput(inputId="size",label=tags$span(style="color: #003399;","Classroom Sq. Ft."),500,2000,value=1000,100,ticks=FALSE)
                       )
                     )
                     
@@ -146,7 +146,7 @@ body <- dashboardBody(
                                #           label=tags$span(style="color: #6699FF;","Air Exchange Rate"),
                                 #        0.3, 4, 1,ticks=FALSE),
                               selectInput(inputId = "filtertype",label=tags$span(style="color: #6699FF;","Filter Type"),
-                                          choices=c("HEPA","MERV 13","MERV 8"),selected="MERV 8"),
+                                          choices=c("HEPA","MERV 13","MERV 11","MERV 8"),selected="MERV 8"),
                               selectInput("portablehepa",label=tags$span(style="color: #6699FF;","Portable Air Purifier"),choices=c("Yes","No"),selected="No"),
                               selectInput("openwindows",label=tags$span(style="color: #6699FF;","Are windows and/or doors open?"),choices=c("Yes","No"),selected="No"))
                               #selectInput("opendoor",label=tags$span(style="color: #6699FF;","Are doors open?"),choices=c("Yes","No")),selected="No"),
@@ -244,7 +244,7 @@ shinyApp(
        
          gauge(risk.output*100,
                min = 0, 
-               max = 25, 
+               max = 10, 
                symbol="%",
                sectors = gaugeSectors(success = c(0, 0.1), 
                                       warning = c(0.1, 1),
