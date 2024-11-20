@@ -5,11 +5,17 @@ require(extrafont)
 require(showtext)
 require(tidyverse)
 require(hrbrthemes)
+require(echarts4r.assets)
 require(echarts4r)
 require(devtools)
 require(flexdashboard)
 require(magrittr)
 require(shinycssloaders)
+require(truncdist)
+require(triangle)
+
+
+
 
 sidebar<-dashboardSidebar(
   sidebarMenu(
@@ -252,7 +258,6 @@ shinyApp(
        
        
        df22<-data.frame(y=risk,type.all,x=person.all)
-       View(df22)
        df22<-df22[df22$type.all=="Total" & df22$x=="Student" & !is.na(df22$type.all),]
        risk.output<-df22$y[!is.na(df22$y)]
        
@@ -265,25 +270,6 @@ shinyApp(
                                       warning = c(0.1, 1),
                                       danger = c(1, 25)))
      
-       
-       #WANT TO MAKE CONDITIONAL TEXT HERE THAT WILL SHOW UP WITH SETTING IS OUTDOORS TO SAY THAT RISKS ARE VERY LOW
-       
-         #df22teacher |> 
-        #   e_charts(x) |>
-        #   e_pictorial(y, symbol = ea_icons("user"), 
-        #               symbolRepeat = TRUE,
-        #               symbolSize = c(15, 15)) %>% 
-        #   e_theme("westeros") %>%
-        #   e_title("Daily Risk: Infections/1,000 People") %>% 
-        #   e_flip_coords() %>%
-           # Hide Legend
-       #    e_legend(show = FALSE) %>%
-           # Remove Gridlines
-        #   e_x_axis(splitLine=list(show = TRUE)) %>%
-        #   e_y_axis(splitLine=list(show = TRUE)) %>%
-           # Format Label
-        #   e_labels(fontSize = 16, fontWeight ='bold', position = "right",offset=c(10,0)) 
-
      })
    }
 )

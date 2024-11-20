@@ -1,8 +1,4 @@
 
-#setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
-
-setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
-  
   timestep<-0.1 #fraction of a minute
   iterations<-1000
   

@@ -71,7 +71,7 @@ View(df22)
 
 airexchange<-"Great"
 
-source("C:/Users/wilso/Documents/ALA-Catalyst/App-1/risk_model_v2.R")
+source("risk_model_v2.R")
 
 type<-c("Inhalation","Ingestion","Total")
 person<-c("Student")

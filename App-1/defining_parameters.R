@@ -1,7 +1,3 @@
-require(truncdist)
-require(triangle)
-
-
 
 #processing inputs from tool-----------------------------------------------------
 
