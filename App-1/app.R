@@ -45,7 +45,9 @@ body <- dashboardBody(
             p("This tool cannot connect to attendance data systems and is not for contact tracing or detecting
               outbreaks. Rather, it is for exploring hypothetical scenarios and seeing, quantitatively, how single or
               bundled interventions could reduce disease burden and maintain infection risk levels below 10%. In other words,
-              the tool is designed for planning and prevention. A paper describing the tool in full detail is under review in a
+              the tool is designed for planning and prevention. New features in development include the ability to download reports
+              with information on tested scenarios and guidance based on the risk calculator tool output.
+              A paper describing the tool in full detail is under review in a
               peer reviewed journal. A link to that paper will be made available here upon publication."),
             p("The development of this tool is funded by the American Lung Association, and Drs. Amanda Wilson and Ashley Lowe
               are working with Arizona-based public, private, and charter schools to inform and improve the tool's develpoment so that it is as
@@ -71,10 +73,11 @@ body <- dashboardBody(
                   risk of infection. This is called a 'dose response' relationship, where a curve informed by data estimates an infection risk based on
                   an estimate of how much virus enters a student's or teacher's body through the lungs or through hand-to-face contacts. To learn more
                   about dose response and its use in quantitative microbial risk assessment, please use the link below."),
-            tags$a(href="https://qmrawiki.org/content/dose-response-assessment","Dose Response Information"),
+            tags$a(href="https://qmrawiki.org/framework/dose-response/dose-response-assessment","Dose Response Information"),
               h3("% of Students Infected"),
                p("This allows you to select what percent of the students are assumed to be infected (asymptomatic or not). You may have a number to inform this setting depending on the number of students who are absent due to illnes, for example.
-                  Or, you  may choose a value just to see how it impacts the estimated infection risk."),
+                  Or, you  may choose a value just to see how it impacts the estimated infection risk. The estimated infection risk will be compared to a
+                 threshold of 10%, which would trigger communication about an outbreak."),
             h2("Classrom-related Settings"),
               h3("Number of Students"),
                 p("This setting allows you to select the number of students in the classroom."),
@@ -102,7 +105,7 @@ body <- dashboardBody(
                   if more fresh air is being circulated. For more information on air exchange rates and recommended air exchange
                   rates for different spaces, please see this information from the American Society of Heating, Refrigerating, and Air Conditioning
                   Engineers (ASHRAE)"),
-                   tags$a(href="chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf", 
+                   tags$a(href="https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf", 
                          "ASHRAE information on Air Changes for Classrooms"),
                 p("The portable air purifier option allows you to select whether one of these devices is assumed to be on in the classroom and working effectively. These devices can be very useful in reducing not only the amount of virus in the air but also dust that can exacerbate students
                   with asthma. Tradeoffs to consider include maintenance (changing out of filters) and being able to safely plug it into an outlet. Some
