@@ -1,14 +1,11 @@
 
-#setwd('C:/Users/amwilson2/Documents/Github repositories/ALA-Catalyst/App-1')
-
-setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
-  
+ 
   timestep<-0.1 #fraction of a minute
   iterations<-10000
   
   #-----------------DEFINING PARAMETERS
-  source('defining_parameters_v2.R')
-  source('defining_rates.R')
+  source('C:/Users/wilso/Documents/ALA-Catalyst/files for pub/defining_parameters_v2.R')
+  source('C:/Users/wilso/Documents/ALA-Catalyst/files for pub/defining_rates.R')
   
   exposure.frames<-list()
   avg.dose.student.inhale<-rep(0,iterations)
@@ -20,7 +17,7 @@ setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
     
     #keep this in iterations loop since we use a new set of probabilities per iteration,
     #informed by newly selected transfer efficiencies, fraction of hand in contact, etc.
-    source('defining_probabilities.R')
+    source('C:/Users/wilso/Documents/ALA-Catalyst/files for pub/defining_probabilities.R')
     
     #defining dimensions for exposure frame
     times=length(1:(class.duration*60*1/timestep))
@@ -59,4 +56,4 @@ setwd('C:/Users/wilso/Documents/ALA-Catalyst/App-1')
 
 
 
-source("Dose-response and data sum.R")
+source("C:/Users/wilso/Documents/ALA-Catalyst/files for pub/Dose-response and data sum.R")

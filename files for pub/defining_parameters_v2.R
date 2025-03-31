@@ -145,16 +145,18 @@ A.student.hand<-percent.total.body*total.body.SA/2 #single hand SA
 A.teacher.hand<-runif(iterations,445,535) #single hand SA
 
 #-----frequency of hand-to-face contacts
-H.teacher.face<-rtrunc(iterations,"norm",mean=14,sd=5.4,a=0,b=30)
-H.teacher<-rlnorm(iterations,meanlog=log(4.1),sdlog=log(1.6))
 
-H.student<-rtriangle(iterations,a=2.7,b=8.3,c=5.00)
-H.student.face<-rtrunc(iterations,"norm",mean=18.9,sd=5.6)
+H.teacher.face<-rtrunc(iterations,"norm",mean=14,sd=5.4,a=0,b=30)/60 #per hour and convert to per minute
+H.teacher<-rlnorm(iterations,meanlog=log(4.1),sdlog=log(1.6)) #per minute
+
+H.student<-rtriangle(iterations,a=328.7,b=999.4,c=599.6)/60 #per hour and convert to per minute
+H.student.face<-rtrunc(iterations,"norm",mean=18.9,sd=5.6)/60 #per hour and convert to per minute
 
 if (studentmaskpercent!=0){
   factor.reduce<-rtriangle(iterations,a=0.07,b=0.21,c=0.12)
   H.student.face<-(H.student.face*factor.reduce*studentmaskpercent)
 }
+
 
 #----------mask filtration efficiencies
 mask.student<-runif(iterations,0.70,0.995)
@@ -174,18 +176,18 @@ mask.student<-runif(iterations,0.70,0.995)
 settle<-rtriangle(a=21.60,b=36,c=28.80)/(24*60)*timestep
 
 #------hand sanitizer
-
-if (pathogen=="Common Cold"){
-  reduce.hands<-1-1/(10^1.5)
-}else{
-  reduce.hands<-1-1/(10^3)
-}
 if(handsanitizer=="Yes"){
-  R<-(-log(reduce.hands/1))/(class.duration*60*timestep)*5 #0.999 reduction per event and assuming 5 hand sanitizer events in a whole day - amount of reduction assumed over a whole day,
+  if (pathogen=="Common Cold"){
+    reduce.hands<-1.5
+  }else{
+    reduce.hands<-3
+  }
+  R<-(-log(1/10^reduce.hands))/(class.duration*60*timestep)
   #and assuming first order decay
 }else{
-  R<-1
+  R<-0
 }
+
 
 #inactivation rates--------
 

@@ -1,0 +1,12 @@
+name: SchoolRiskCalculatorv2
+title: SchoolRiskCalculatorv2
+username: amwilson-ehs
+account: amwilson-ehs
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13449725
+bundleId: 9490315
+url: https://amwilson-ehs.shinyapps.io/SchoolRiskCalculatorv2/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

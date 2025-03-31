@@ -16,13 +16,13 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
   lambda.3.8<-(A.student.hand/A.surface)*numstudents*S.H.student*H.student*TE.SH*timestep
 
 #8--->3, student hands to surfaces
- lambda.8.3<- S.H.student*TE.HS*H.student*numstudents
+ lambda.8.3<- 0.5*S.H.student*TE.HS*H.student*numstudents
   
 #3--->9, surfaces to teacher hands
   lambda.3.9<-(A.teacher.hand/A.surface)*S.H.teacher*TE.SH*timestep
   
 #9--->8, teacher hands to surfaces
-  lambda.9.3<-S.H.teacher*TE.HS*H.teacher*timestep
+  lambda.9.3<-0.5*S.H.teacher*TE.HS*H.teacher*timestep
     
 #1---->4, room air to student respiratory tract
   if(studentmaskpercent!=0){
@@ -32,13 +32,11 @@ states<-c("room air","exhaust","surfaces","student respiratory tracts","teacher 
   }else{
     lambda.1.4<-(1/volume)*(inhalation.student*numstudents)
   }
-#mean(lambda.1.4)
+
 #1---->5, room air to teacher respiratory tract
-  #if(teacher.mask==TRUE){
-  #  lambda.1.5<-(1/volume)*(1-mask.teacher)*inhalation.teacher
-  #}else{
+
     lambda.1.5<-(1/volume)*inhalation.teacher
-  #}
+
 
 #8---->6, hands to student mucosal membrane
     lambda.8.6<-S.F.student*TE.HF*numstudents*H.student.face

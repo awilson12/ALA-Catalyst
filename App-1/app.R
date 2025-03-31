@@ -38,9 +38,9 @@ body <- dashboardBody(
     
     tabItem(tabName = "about",
             h2("What is this app all about?"),
-            p("This application is meant to guide decision-making regarding interventions in schools meant to reduce 
-              the spread of respiratory viral diseases, such as flu or rhinovirus, the virus responsible for
-              the common cold. This application is also useful for educational purposes by demonstrating in
+            p("This application is meant to guide decision-making in schools with regards to interventions meant to reduce 
+              the spread of respiratory viral diseases, such as flu or rhinovirus (the virus responsible for
+              the common cold). This application is also useful for educational purposes by demonstrating in
               real time how single or bundled interventions can reduce risks for students and teachers.",style="font-size:18px;"),
             p("This tool cannot connect to attendance data systems and is not for contact tracing or detecting
               outbreaks. Rather, it is for exploring hypothetical scenarios and seeing, quantitatively, how single or
@@ -59,14 +59,14 @@ body <- dashboardBody(
     ),
     tabItem(tabName="How",
             h2("How to Use the Tool"),
-              p("This calculator tool estimates the average infection risk per student and for the teacher for a simulation of 8-hr of class. This means that risks
+              p("This calculator tool estimates the average infection risk per student and for the teacher for a simulation of 3-hr of class time. This means that risks
                 for some scenarios (like specials classes that may only be for an hour) are likely over estimated. The 
                 output is given in the form of a percent chance any given student gets infected. These numbers update as you change
                 settings in the model with the menu below the figure. Not every student who gets infected will become ill (i.e., have symptoms), but those who are infectious
                 can still infect others without symptoms.
                 The available parameters and their descriptions are provided below.",style="font-size:18px;"),
               p("We use a framework called 'Quantitative Microbial Risk Assessment' (QMRA), in which we use data from published scientific literature and assumptions
-                based on the inputs that to select to quantify an infection risk for a given scenario. More information on what QMRA is and how it's used can be found below.",style="font-size:18px;"),
+                based on the inputs that you select to quantify an infection risk for a given scenario. More information on what QMRA is and how it's used can be found below.",style="font-size:18px;"),
               tags$a(href="https://qmrawiki.org/about", "What is QMRA?",style="font-size:18px;"),
             h2("Illness-related Settings"),  
               h3("Illness Type"),
@@ -76,10 +76,10 @@ body <- dashboardBody(
                   about dose response and its use in quantitative microbial risk assessment, please use the link below.",style="font-size:18px;"),
             tags$a(href="https://qmrawiki.org/framework/dose-response/dose-response-assessment","Dose Response Information",style="font-size:18px;"),
               h3("% of Students Infected"),
-               p("This allows you to select what percent of the students are assumed to be infected (asymptomatic or not). You may have a number to inform this setting depending on the number of students who are absent due to illnes, for example.
+               p("This allows you to select what percent of the students are assumed to be infected (asymptomatic or not). You may have a number to inform this setting depending on the number of students who are absent due to illness, for example.
                   Or, you  may choose a value just to see how it impacts the estimated infection risk. The estimated infection risk will be compared to a
                  threshold of 10%, which would trigger communication about an outbreak.",style="font-size:18px;"),
-            h2("Classrom-related Settings"),
+            h2("Classroom-related Settings"),
               h3("Number of Students"),
                 p("This setting allows you to select the number of students in the classroom.",style="font-size:18px;"),
               h3("Grade Level"),
@@ -107,21 +107,21 @@ body <- dashboardBody(
                   rates for different spaces, please see this information from the American Society of Heating, Refrigerating, and Air Conditioning
                   Engineers (ASHRAE)",style="font-size:18px;"),
                    tags$a(href="https://www.ashrae.org/file%20library/technical%20resources/free%20resources/design-guidance-for-education-facilities.pdf", 
-                         "ASHRAE information on Air Changes for Classrooms",style="font-size:18px;"),
+                         "ASHRAE Information on Air Changes for Classrooms",style="font-size:18px;"),
                 p("The portable air purifier option allows you to select whether one of these devices is assumed to be on in the classroom and working effectively. These devices can be very useful in reducing not only the amount of virus in the air but also dust that can exacerbate students
                   with asthma. Tradeoffs to consider include maintenance (changing out of filters) and being able to safely plug it into an outlet. Some
-                  may be noisy, and the amount of air the device filters per time should be considered when purshasing one or more for a given space.",style="font-size:18px;"),
+                  may be noisy, and the amount of air the device filters per time should be considered when purchasing one or more for a given space.",style="font-size:18px;"),
                 p("You can also decide whether to assume windows and/or doors are open or closed in the classroom. Open windows and doors can increase the amount of
                   fresh air that is circulated in the room, diluting the amount of virus that is exhaled by infected students. We assume that opening doors or
-                  windows will double the current fresh air exchange. The pros of this approach is it is inexpensive since it doesn't require new equipment.
+                  windows will double the current fresh air exchange. The pro of this approach is it is inexpensive since it doesn't require new equipment.
                   However, the tradeoffs to consider include potential distractions for students, safety concerns, weather, or sources of air pollution
                   that could be nearby the school, such as for schools in high vehicle traffic areas.",style="font-size:18px;"),
               h3("Percent of Student Masks"),
                 p("In this setting, you can select the percent of students that are wearing masks (including 0% as an option). The mask effectiveness
-                  values used in the model assume that the mask is being worn propertly (i.e., sealed securly to the chin and nose). So reductions in risk
-                  that are estimated are optimistic, and barriers to feasibility in proper use should be considered. Tradeoffs to consider include
+                  values used in the model assume that the mask is being worn properly (i.e., sealed securely to the chin and nose). This means estimated risk reductions
+                  are optimistic and do not account for students that are wearing masks but wearing them improperly. Tradeoffs to consider include
                   safety issues, such as choking hazards with the straps, for small students or students with special educational needs and the
-                  abilitiy to enforce compliance with wearing them properly. It may also interfere with certain subjects, such as phonics or
+                  ability to enforce compliance with wearing them properly. It may also interfere with certain subjects, such as phonics or
                   English as a Second Language (ESL) education.",style="font-size:18px;")
             ),
     tabItem(tabName= "calc",
@@ -217,62 +217,27 @@ shinyApp(
        pathogen<<-input$pathogen 
        numstudents<<-as.numeric(input$numstudents)
        fractinfect<<-as.numeric(input$fractinfect)
-       #teachermasktype<<-input$teachermasktype
        airexchange<<-input$airexchange
        actlevel<<-input$actlevel
        studentage<<-input$studentage
-       #teachermask<<-input$teachermask
        openwindows<<-input$openwindows
        handsanitizer<<-input$handsanitizer
-       #opendoor<<-input$opendoor
        hepa<<-input$portablehepa
        filtertype<<-input$filtertype
        
        source('risk_model.R')
        
-       
-       frame.all<-data.frame(risks=c(risk.student.inhale,risk.student.face,risk.student.total),
-                             type=c(rep("Inhalation",length(risk.student.inhale)),rep("Ingestion",length(risk.student.face)),rep("Total",length(risk.student.total))),
-                             person=c(rep("Student",length(c(risk.student.inhale,risk.student.face,risk.student.total)))))
-       
-       
-       type<-c("Inhalation","Ingestion","Total")
-       person<-c("Student")
-       type.all<-rep(NA,6)
-       person.all<-rep(NA,6)
-       risk<-rep(NA,6)
-       
-       for (i in 1:3){
-         for (j in 1:2){
-           if (i==1 & j==1){
-             risk<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
-             type.all<-type[i]
-             person.all<-person[j]
-           }else{
-             risktemp<-mean(frame.all$risks[frame.all$type==type[i] & frame.all$person==person[j]])
-             typetemp<-type[i]
-             persontemp<-person[j]
-             risk<-c(risk,risktemp)
-             type.all<-c(type.all,typetemp)
-             person.all<-c(person.all,persontemp)
-           }
-           
-         }
-       }
-       
-       
-       df22<-data.frame(y=risk,type.all,x=person.all)
-       df22<-df22[df22$type.all=="Total" & df22$x=="Student" & !is.na(df22$type.all),]
-       risk.output<-df22$y[!is.na(df22$y)]
-       
+       risk_model()
+       print(risk.output)
        
          gauge(risk.output*100,
                min = 0, 
-               max = 10, 
+               max = 10.0, 
                symbol="%",
-               sectors = gaugeSectors(success = c(0, 0.1), 
-                                      warning = c(0.1, 1),
-                                      danger = c(1, 25)))
+               abbreviateDecimals = 2,
+               sectors = gaugeSectors(success = c(0, 0.10), 
+                                      warning = c(0.10, 5.0),
+                                      danger = c(5.0, 25.0)))
      
      })
    }

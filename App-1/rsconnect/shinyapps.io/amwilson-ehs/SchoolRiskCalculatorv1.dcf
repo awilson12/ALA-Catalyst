@@ -5,7 +5,7 @@ account: amwilson-ehs
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13405851
-bundleId: 9393896
+bundleId: 9490968
 url: https://amwilson-ehs.shinyapps.io/SchoolRiskCalculatorv1/
 version: 1
 asMultiple: FALSE

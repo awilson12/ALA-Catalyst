@@ -32,7 +32,7 @@ handsanitizer<-"Yes"
 class.duration<-8
 
 
-source("C:/Users/wilso/Documents/ALA-Catalyst/App-1/risk_model_v2.R")
+source("C:/Users/wilso/Documents/ALA-Catalyst/files for pub/risk_model_v2.R")
 
 type<-c("Inhalation","Ingestion","Total")
 person<-c("Student")
@@ -71,7 +71,7 @@ View(df22)
 
 airexchange<-"Great"
 
-source("risk_model_v2.R")
+source("C:/Users/wilso/Documents/ALA-Catalyst/files for pub/risk_model_v2.R")
 
 type<-c("Inhalation","Ingestion","Total")
 person<-c("Student")
@@ -128,7 +128,7 @@ handsanitizer<-"No"
 class.duration<-1
 
 
-source("C:/Users/wilso/Documents/ALA-Catalyst/App-1/risk_model_v2.R")
+source("C:/Users/wilso/Documents/ALA-Catalyst/files for pub/risk_model_v2.R")
 
 type<-c("Inhalation","Ingestion","Total")
 person<-c("Student")
@@ -166,7 +166,7 @@ View(df22)
 
 hepa<-"Yes"
 
-source("C:/Users/wilso/Documents/ALA-Catalyst/App-1/risk_model_v2.R")
+source("C:/Users/wilso/Documents/ALA-Catalyst/files for pub/risk_model_v2.R")
 
 type<-c("Inhalation","Ingestion","Total")
 person<-c("Student")
@@ -223,7 +223,7 @@ handsanitizer<-"No"
 class.duration<-1
 
 
-source("C:/Users/wilso/Documents/ALA-Catalyst/App-1/risk_model_v2.R")
+source("C:/Users/wilso/Documents/ALA-Catalyst/files for pub/risk_model_v2.R")
 summary(AER)
 
 type<-c("Inhalation","Ingestion","Total")
@@ -275,7 +275,7 @@ filtertype<-"MERV 8"
 handsanitizer<-"No"
 
 
-source("C:/Users/wilso/Documents/ALA-Catalyst/App-1/risk_model_v2.R")
+source("C:/Users/wilso/Documents/ALA-Catalyst/files for pub/risk_model_v2.R")
 summary(AER)
 
 type<-c("Inhalation","Ingestion","Total")
@@ -316,21 +316,21 @@ View(df22)
 #----------exploring an ideal case
 
 
-size<-"Large"
-pathogen<-"Flu"
-studentmaskpercent<-50
+size<-"Medium"
+pathogen<-"Common cold"
+studentmaskpercent<-30
 numstudents<-30
-fractinfect<-10
+fractinfect<-5
 airexchange<-"Great"
-actlevel<-"Music"
+actlevel<-"General ed"
 studentage<-"3rd"
 openwindows<-"Yes"
 hepa<-"Yes"
 filtertype<-"HEPA"
 handsanitizer<-"Yes"
-class.duration<-1
+class.duration<-8
 
-source("C:/Users/wilso/Documents/ALA-Catalyst/App-1/risk_model_v2.R")
+source("C:/Users/wilso/Documents/ALA-Catalyst/files for pub/risk_model_v2.R")
 summary(AER)
 
 type<-c("Inhalation","Ingestion","Total")
