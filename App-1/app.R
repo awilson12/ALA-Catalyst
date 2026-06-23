@@ -73,7 +73,7 @@ calc_sidebar <- sidebar(
         checkboxInput("advclass", "Advanced: set exact square footage", FALSE),
         conditionalPanel(
           condition = "input.advclass == true",
-          sliderInput("size", "Classroom sq. ft.",
+          sliderInput("size_sqft", "Classroom sq. ft.",
                       min = 500, max = 2000, value = 1000, step = 100, ticks = FALSE)
         )
       )
@@ -249,7 +249,10 @@ ui <- page_navbar(
 server <- function(input, output) {
   output$plot <- renderGauge({
 
-    size <<- input$size
+    # Use the exact sq-ft slider when advanced is checked, else the size category.
+    # (These are separate inputs now to avoid a duplicate-ID conflict that made
+    #  risk_model() error and freeze the gauge at its last value.)
+    size <<- if (isTRUE(input$advclass)) as.numeric(input$size_sqft) else input$size
     studentmaskpercent <<- input$studentmaskpercent
     pathogen <<- input$pathogen
     numstudents <<- as.numeric(input$numstudents)
