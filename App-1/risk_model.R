@@ -1,22 +1,12 @@
 
   risk_model<-function(timestep=0.1,iterations=3000){
     
-    require(shiny)
-    require(shinydashboard)
-    require(waffle)
-    require(extrafont)
-    require(showtext)
-    require(tidyverse)
-    require(hrbrthemes)
-    require(echarts4r.assets)
-    require(echarts4r)
-    require(devtools)
-    require(flexdashboard)
-    require(magrittr)
-    require(shinycssloaders)
+    # Only these are used by the model math. (The long list of plotting/UI
+    # packages here previously was unused and broke shinyapps.io deploys —
+    # echarts4r.assets is GitHub-only, not on CRAN.)
     require(truncdist)
     require(triangle)
-    
+
     set.seed(18)
   
   #-----------------DEFINING PARAMETERS
