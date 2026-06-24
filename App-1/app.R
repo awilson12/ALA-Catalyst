@@ -99,7 +99,20 @@ calc_sidebar <- sidebar(
       sliderInput("studentmaskpercent", "Percent of students masked",
                   min = 0, max = 100, value = 0, ticks = FALSE),
       selectInput("handsanitizer", "Hand sanitizer used by students",
-                  choices = c("Yes", "No"), selected = "No")
+                  choices = c("Yes", "No"), selected = "No"),
+      checkboxInput("advsurface",
+                    "Advanced: explore shared surface area", FALSE),
+      conditionalPanel(
+        condition = "input.advsurface == true",
+        sliderInput("surfacearea", "Total shared surface area (cm²)",
+                    min = 2000, max = 120000, value = 84435, step = 2000,
+                    ticks = FALSE),
+        helpText("Default model uses a range of 57,240–111,630 cm². ",
+                 "Smaller shared surface areas concentrate virus onto hands, ",
+                 "strengthening the fomite pathway — the route hand sanitizer ",
+                 "acts on. Use this to explore how surface area drives the ",
+                 "impact of hand hygiene.")
+      )
     )
   )
 )
@@ -264,6 +277,8 @@ server <- function(input, output) {
     handsanitizer <<- input$handsanitizer
     hepa <<- input$portablehepa
     filtertype <<- input$filtertype
+    # Optional fixed shared surface area; NA -> model uses its default range.
+    surfacearea <<- if (isTRUE(input$advsurface)) as.numeric(input$surfacearea) else NA
 
     risk_model()
     print(risk.output)

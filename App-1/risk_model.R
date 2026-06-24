@@ -147,7 +147,15 @@
     S.F.student<-runif(iterations,0.008,0.010)/2 
     S.F.teacher<-runif(iterations,0.008,0.010)/2 
     
-    A.surface<-runif(iterations,57240,111630)
+    # Total shared fomite surface area (cm^2). Default is the published
+    # Uniform(57240, 111630) range; if the user sets an explicit value in the
+    # tool, use it as a fixed area so they can explore how surface area drives
+    # the fomite pathway (and thus the impact of hand sanitizer).
+    if(exists("surfacearea") && length(surfacearea)==1 && !is.na(surfacearea) && surfacearea>0){
+      A.surface<-rep(surfacearea,iterations)
+    }else{
+      A.surface<-runif(iterations,57240,111630)
+    }
     percent.total.body<-runif(iterations,0.047,0.066)
     
     if(student.age<6){
