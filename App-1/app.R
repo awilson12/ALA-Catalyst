@@ -231,17 +231,29 @@ calc_tab <- nav_panel(
   title = "Calculator", icon = icon("calculator"),
   layout_sidebar(
     sidebar = calc_sidebar,
-    card(
-      class = "gauge-card",
-      card_header("Percent chance of infection per student"),
-      card_body(
-        withSpinner(flexdashboard::gaugeOutput("plot", height = "260px"),
-                    color = "#0a6ebd"),
-        div(class = "gauge-caption",
-            "Estimated average infection risk for one student over a 3-hour class.
-             Adjust the settings in the sidebar to see how interventions change the
-             risk in real time."),
-        div(class = "mt-2", risk_legend)
+    layout_columns(
+      col_widths = c(8, 4),
+      card(
+        class = "gauge-card",
+        card_header("Percent chance of infection per student"),
+        card_body(
+          withSpinner(flexdashboard::gaugeOutput("plot", height = "260px"),
+                      color = "#0a6ebd"),
+          div(class = "gauge-caption",
+              "Estimated average infection risk for one student over a 3-hour class.
+               Adjust the settings in the sidebar to see how interventions change the
+               risk in real time."),
+          div(class = "mt-2", risk_legend)
+        )
+      ),
+      value_box(
+        title = "Ingestion (fomite) risk",
+        value = textOutput("ingestion_val"),
+        showcase = icon("hands-bubbles"),
+        theme = "secondary",
+        p("The hand-to-face route — this is what hand sanitizer and the shared
+           surface-area setting affect. It is normally a tiny fraction of the
+           total, which is dominated by inhalation.")
       )
     )
   )
@@ -260,8 +272,9 @@ ui <- page_navbar(
 
 # ---- Server (logic unchanged from original) ----------------------------------
 server <- function(input, output) {
-  output$plot <- renderGauge({
 
+  # Run the model once per input change; both outputs read from this.
+  results <- reactive({
     # Use the exact sq-ft slider when advanced is checked, else the size category.
     # (These are separate inputs now to avoid a duplicate-ID conflict that made
     #  risk_model() error and freeze the gauge at its last value.)
@@ -281,9 +294,11 @@ server <- function(input, output) {
     surfacearea <<- if (isTRUE(input$advsurface)) as.numeric(input$surfacearea) else NA
 
     risk_model()
-    print(risk.output)
+    list(total = risk.output, ingestion = risk.output.ingestion)
+  })
 
-    gauge(risk.output * 100,
+  output$plot <- renderGauge({
+    gauge(results()$total * 100,
           min = 0,
           max = 10.0,
           symbol = "%",
@@ -291,6 +306,10 @@ server <- function(input, output) {
           sectors = gaugeSectors(success = c(0, 0.10),
                                  warning = c(0.10, 5.0),
                                  danger  = c(5.0, 25.0)))
+  })
+
+  output$ingestion_val <- renderText({
+    paste0(formatC(results()$ingestion * 100, format = "g", digits = 3), "%")
   })
 }
 

@@ -519,5 +519,8 @@
   df22<-data.frame(y=risk,type.all,x=person.all)
   df22<-df22[df22$type.all=="Total" & df22$x=="Student" & !is.na(df22$type.all),]
   risk.output<<-df22$y[!is.na(df22$y)]
-  
+  # Mean ingestion (hand-to-face / fomite) risk, exposed so the tool can show
+  # the route that hand sanitizer and shared surface area actually affect.
+  risk.output.ingestion<<-mean(risk.student.face)
+
 }
