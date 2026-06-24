@@ -421,12 +421,14 @@
       
        sim.mat[,k]<-sim.mat[,k-1]%*%Ptemp
        sim.mat[1,k]<-sim.mat[1,k]+air.emissions[i]
-       #if(!is.na(droplet.emissions[i])){
-      #    sim.mat[3,k]<-sim.mat[3,k]+droplet.emissions[i]
-      # }else{
-      #    sim.mat[3,k]<-sim.mat[3,k]
-      # }
-       
+       # Direct droplet deposition onto surfaces (state 3), the source that
+       # feeds the surface -> hand -> face fomite pathway.
+       if(!is.na(droplet.emissions[i])){
+           sim.mat[3,k]<-sim.mat[3,k]+droplet.emissions[i]
+       }else{
+           sim.mat[3,k]<-sim.mat[3,k]
+       }
+
 
     }       #end of exposure model
     
