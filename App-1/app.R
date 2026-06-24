@@ -44,7 +44,23 @@ extra_css <- tags$head(tags$style(HTML("
   .prose h3 { margin-top: 1.4rem; font-weight: 600; }
   .card { border:none; box-shadow:0 1px 3px rgba(16,42,67,.08), 0 1px 2px rgba(16,42,67,.06); }
   .accordion-button { font-weight: 600; }
+  .app-disclaimer {
+    background:#fff8e6; border:1px solid #f0d48a; color:#7a5b00;
+    border-radius:.5rem; padding:.55rem .9rem; margin-bottom:1rem;
+    font-size:.88rem; line-height:1.4;
+  }
+  .app-disclaimer strong { color:#5c4400; }
 ")))
+
+disclaimer_bar <- div(
+  class = "app-disclaimer",
+  icon("triangle-exclamation"),
+  HTML("&nbsp;<strong>Educational prototype — under active development.</strong>
+        This tool is for educational and planning purposes only. It produces
+        estimated, hypothetical infection risks to compare interventions and is
+        <strong>not</strong> a diagnostic, medical, or operational decision-making
+        tool. Results should not be used to guide individual health decisions.")
+)
 
 # ---- Reusable input groups (sidebar) -----------------------------------------
 calc_sidebar <- sidebar(
@@ -263,7 +279,7 @@ ui <- page_navbar(
   title = "School Respiratory Risk Tool",
   theme = app_theme,
   fillable = FALSE,
-  header = extra_css,
+  header = tagList(extra_css, disclaimer_bar),
   welcome_tab,
   about_tab,
   how_tab,
