@@ -60,8 +60,8 @@ node_xy <- function(net, P) {
   xy
 }
 
-plot_network <- function(net, res, infected, P) {
-  N <- P$N; C <- net$contact; xy <- node_xy(net, P)
+plot_network <- function(net, res, infected, P, xy) {
+  N <- P$N; C <- net$contact
   op <- par(mar = c(0, 0, 0, 0)); on.exit(par(op))
   plot(xy, type = "n", axes = FALSE, xlab = "", ylab = "", asp = 1,
        xlim = range(xy[, 1]) + c(-.35, .35), ylim = range(xy[, 2]) + c(-.35, .35))
@@ -138,10 +138,12 @@ ui <- page_sidebar(
   layout_columns(
     col_widths = c(7, 5),
     card(card_header("Contact network (node colour = infection risk, ✕ = infected)"),
-         plotOutput("net", height = "460px"),
+         uiOutput("net_info"),
+         plotOutput("net", height = "430px",
+                    hover = hoverOpts("net_hover", delay = 60, delayType = "debounce")),
          card_footer(class = "text-muted small",
            HTML("Green → red = low → high risk. Edges = close-contact time. "),
-           "Clusters are seating groups/pods.")),
+           "Clusters are seating groups/pods. Hover a student for details.")),
     card(card_header("Per-student risk vs. the room average"),
          plotOutput("dist", height = "460px"),
          card_footer(class = "text-muted small",
@@ -167,13 +169,33 @@ server <- function(input, output) {
     net <- make_network(P)
     infected <- sample(P$N, P$n.infected)
     list(P = P, net = net, infected = infected,
-         res = compute_risk(net, infected, P))
+         res = compute_risk(net, infected, P), xy = node_xy(net, P))
   })
 
-  output$net  <- renderPlot(plot_network(model()$net, model()$res,
-                                         model()$infected, model()$P))
+  output$net  <- renderPlot({ m <- model()
+    plot_network(m$net, m$res, m$infected, m$P, m$xy) })
   output$dist <- renderPlot(plot_distribution(model()$net, model()$res,
                                               model()$infected, model()$P))
+
+  # Live readout: map hover position to the nearest node and describe it.
+  output$net_info <- renderUI({
+    base <- "padding:.45rem .75rem;border-radius:.45rem;margin-bottom:.5rem;font-size:.9rem;"
+    prompt <- div(style = paste0(base, "background:#f2f5f8;color:#5a7184;"),
+                  "Hover over a student to see whether they are infected or susceptible, and their risk.")
+    h <- input$net_hover; if (is.null(h)) return(prompt)
+    m <- model(); xy <- m$xy
+    d <- sqrt((xy[, 1] - h$x)^2 + (xy[, 2] - h$y)^2); i <- which.min(d)
+    if (d[i] > 0.18) return(prompt)
+    if (i %in% m$infected)
+      div(style = paste0(base, "background:#fde8eb;color:#9d2235;font-weight:600;"),
+          icon("xmark"),
+          sprintf(" Student %d — Infected (index case; a source of exposure, not at risk)", i))
+    else
+      div(style = paste0(base, "background:#e4f0fb;color:#0a4f86;font-weight:600;"),
+          icon("user"),
+          sprintf(" Student %d — Susceptible · risk %.1f%% · pod %d · %d min close contact with infected",
+                  i, 100 * m$res$risk[i], m$net$pod[i], round(60 * m$res$contact.h[i])))
+  })
 
   fmt <- function(x) sprintf("%.1f%%", 100 * x)
   output$v_far  <- renderText(fmt(model()$res$p.far))
