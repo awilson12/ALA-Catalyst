@@ -94,7 +94,34 @@ plot_distribution <- function(st, infected, P) {
 }
 
 # ---- ui --------------------------------------------------------------------
-app_theme <- bs_theme(version = 5, bootswatch = "cosmo", primary = "#0a6ebd")
+app_theme <- bs_theme(version = 5, bootswatch = "cosmo",
+                      primary = "#3a6ea5", "border-radius" = "0.75rem")
+
+polish_css <- tags$head(tags$style(HTML("
+  .card, .bslib-value-box {
+    border:none !important; border-radius:1rem !important;
+    box-shadow:0 1px 2px rgba(16,42,67,.05), 0 6px 18px rgba(16,42,67,.05);
+  }
+  .card-header {
+    background:transparent; font-weight:600;
+    border-bottom:1px solid rgba(16,42,67,.06);
+    border-radius:1rem 1rem 0 0 !important;
+  }
+  .bslib-sidebar-layout > .sidebar {
+    background:#f6f8fb; border:none; border-radius:1rem; padding-top:.4rem;
+  }
+  .form-control, .form-select, .btn { border-radius:.65rem !important; }
+  .irs--shiny .irs-bar, .irs--shiny .irs-handle>i:first-child { background:#3a6ea5; }
+  .irs--shiny .irs-handle { border-color:#cdd8e3; }
+  .irs--shiny .irs-from, .irs--shiny .irs-to, .irs--shiny .irs-single { background:#3a6ea5; }
+  .app-disclaimer { border-radius:.85rem !important; }
+")))
+
+# Muted, low-saturation value-box palette (was bright danger/warning)
+vb_neutral <- value_box_theme(bg = "#eef1f5", fg = "#46586a")
+vb_blue    <- value_box_theme(bg = "#e7eef7", fg = "#345a7e")
+vb_rose    <- value_box_theme(bg = "#f3e9e7", fg = "#8c574f")
+vb_amber   <- value_box_theme(bg = "#f2eddc", fg = "#7c6a39")
 disclaimer <- div(
   style = "background:#fff8e6;border:1px solid #f0d48a;color:#7a5b00;border-radius:.5rem;
            padding:.55rem .9rem;margin-bottom:1rem;font-size:.88rem;",
@@ -117,13 +144,13 @@ controls <- sidebar(
 
 ui <- page_sidebar(
   title = "Contact-Network Risk Explorer", theme = app_theme, sidebar = controls,
-  tags$head(tags$style(HTML(".card{border:none;box-shadow:0 1px 3px rgba(16,42,67,.1);}"))),
+  polish_css,
   disclaimer,
   layout_columns(col_widths = c(3, 3, 3, 3),
-    value_box("Well-mixed average", textOutput("v_far"),  showcase = icon("wind"),       theme = "secondary"),
-    value_box("Network mean",       textOutput("v_mean"), showcase = icon("users"),      theme = "primary"),
-    value_box("Highest-risk student", textOutput("v_max"), showcase = icon("user-xmark"), theme = "danger"),
-    value_box("Students above 10%", textOutput("v_over"), showcase = icon("triangle-exclamation"), theme = "warning")),
+    value_box("Well-mixed average", textOutput("v_far"),  showcase = icon("wind"),                theme = vb_neutral),
+    value_box("Network mean",       textOutput("v_mean"), showcase = icon("users"),               theme = vb_blue),
+    value_box("Highest-risk student", textOutput("v_max"), showcase = icon("user-xmark"),          theme = vb_rose),
+    value_box("Students above 10%", textOutput("v_over"), showcase = icon("triangle-exclamation"), theme = vb_amber)),
   layout_columns(col_widths = c(7, 5),
     card(card_header("Seating chart — drag desks to rearrange the room (red ring = infected)"),
          visNetworkOutput("seat", height = "470px"),
