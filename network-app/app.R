@@ -65,11 +65,14 @@ build_nodes <- function(pos, infected, st, P) {
     sprintf("<b>Student %d</b><br>Infected (index case)", i) else
     sprintf("<b>Student %d</b><br>Susceptible<br>Risk: %.1f%%<br>%d min close contact w/ infected",
             i, 100 * st$risk[i], round(60 * st$contact.h[i])), character(1))
+  # "circle" puts the student number INSIDE the node (dot/star put it below).
+  # Infected are marked by a thick red ring on a dark fill instead of a shape.
   data.frame(id = seq_len(N), label = as.character(seq_len(N)),
              x = pos[, 1], y = pos[, 2],
-             color.background = bg, color.border = "#ffffff",
-             shape = ifelse(isInf, "star", "dot"),
-             size = ifelse(isInf, 22, 15), title = ttl, stringsAsFactors = FALSE)
+             color.background = bg,
+             color.border = ifelse(isInf, "#e23b3b", "#ffffff"),
+             borderWidth = ifelse(isInf, 4, 2),
+             shape = "circle", title = ttl, stringsAsFactors = FALSE)
 }
 
 pos_from_input <- function(lst, N) {
@@ -122,7 +125,7 @@ ui <- page_sidebar(
     value_box("Highest-risk student", textOutput("v_max"), showcase = icon("user-xmark"), theme = "danger"),
     value_box("Students above 10%", textOutput("v_over"), showcase = icon("triangle-exclamation"), theme = "warning")),
   layout_columns(col_widths = c(7, 5),
-    card(card_header("Seating chart — drag desks to rearrange the room (★ = infected)"),
+    card(card_header("Seating chart — drag desks to rearrange the room (red ring = infected)"),
          visNetworkOutput("seat", height = "470px"),
          card_footer(class = "text-muted small",
            "Drag any desk; risk recomputes from how close each student sits to an infected classmate. Hover for details.")),
@@ -154,7 +157,8 @@ server <- function(input, output, session) {
   output$seat <- renderVisNetwork({ rv$struct
     isolate({ req(rv$pos); P <- params()
       visNetwork(build_nodes(rv$pos, rv$infected, state(), P)) |>
-        visNodes(borderWidth = 2, font = list(size = 15, color = "#ffffff")) |>
+        visNodes(font = list(size = 16, color = "#111111",
+                             strokeWidth = 3, strokeColor = "#ffffff")) |>
         visPhysics(enabled = FALSE) |>
         visInteraction(dragNodes = TRUE, dragView = TRUE, zoomView = TRUE,
                        hover = TRUE, tooltipDelay = 60) |>
