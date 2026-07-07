@@ -1,19 +1,6 @@
 
   risk_model<-function(timestep=0.1,iterations=3000){
     
-    require(shiny)
-    require(shinydashboard)
-    require(waffle)
-    require(extrafont)
-    require(showtext)
-    require(tidyverse)
-    require(hrbrthemes)
-    require(echarts4r.assets)
-    require(echarts4r)
-    require(devtools)
-    require(flexdashboard)
-    require(magrittr)
-    require(shinycssloaders)
     require(truncdist)
     require(triangle)
     
@@ -421,11 +408,12 @@
       
        sim.mat[,k]<-sim.mat[,k-1]%*%Ptemp
        sim.mat[1,k]<-sim.mat[1,k]+air.emissions[i]
-       #if(!is.na(droplet.emissions[i])){
-      #    sim.mat[3,k]<-sim.mat[3,k]+droplet.emissions[i]
-      # }else{
-      #    sim.mat[3,k]<-sim.mat[3,k]
-      # }
+       # Direct droplet deposition onto surfaces (enabled to match Methods 2.3.4).
+       if(!is.na(droplet.emissions[i])){
+           sim.mat[3,k]<-sim.mat[3,k]+droplet.emissions[i]
+       }else{
+           sim.mat[3,k]<-sim.mat[3,k]
+       }
        
 
     }       #end of exposure model
